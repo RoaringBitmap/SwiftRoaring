@@ -1,0 +1,15 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+provides-nominal:
+provides-member:
+depends-top-level:
+depends-member:
+depends-nominal:
+depends-dynamic-lookup:
+depends-external:
+- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
+- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/home/jeremiepiotte/SwiftRoaring/Sources/CRoaring/include/roaring.h"
+- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
+- "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
+interface-hash: "57e6e37cf4aecfb054546f79c5bec150"

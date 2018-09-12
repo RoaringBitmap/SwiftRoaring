@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.build/master.swiftdeps"
+  },
+  "/home/jeremiepiotte/SwiftRoaring/Sources/SwiftRoaring/main.swift": {
+    "dependencies": "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.build/main.d",
+    "object": "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.build/main.swift.o",
+    "swiftmodule": "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.build/main~partial.swiftmodule",
+    "swift-dependencies": "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.build/main.swiftdeps"
+  }
+}

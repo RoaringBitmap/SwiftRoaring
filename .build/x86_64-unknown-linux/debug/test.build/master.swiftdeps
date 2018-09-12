@@ -1,0 +1,5 @@
+version: "Swift version 4.1.3 (swift-4.1.3-RELEASE)"
+options: "5cc72fbec1215c798b1f9ebac165ee26"
+build_time: [1536762927, 489568690]
+inputs:
+  "/home/jeremiepiotte/SwiftRoaring/Sources/test/test.swift": [1536613259, 0]

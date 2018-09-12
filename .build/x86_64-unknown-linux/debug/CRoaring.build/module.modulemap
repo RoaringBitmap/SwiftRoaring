@@ -1,0 +1,4 @@
+module CRoaring {
+    umbrella "/home/jeremiepiotte/SwiftRoaring/Sources/CRoaring/include"
+    export *
+}

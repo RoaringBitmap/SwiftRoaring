@@ -1,0 +1,5 @@
+version: "Swift version 4.1.3 (swift-4.1.3-RELEASE)"
+options: "cfacc9d68057b511567de5f136ce47fd"
+build_time: [1536762927, 860300068]
+inputs:
+  "/home/jeremiepiotte/SwiftRoaring/Sources/SwiftRoaring/main.swift": [1536614520, 0]
