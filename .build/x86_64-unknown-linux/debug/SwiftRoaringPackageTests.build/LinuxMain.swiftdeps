@@ -1,0 +1,72 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "tests"
+provides-nominal:
+provides-member:
+depends-top-level:
+- "+="
+- "XCTMain"
+- "XCTestCaseEntry"
+- "swiftRoaringTests"
+- "tests"
+depends-member:
+- ["Sa", "init"]
+- ["s13ArrayProtocolP", "init"]
+- ["SK", "init"]
+- ["Sl", "init"]
+- ["s28CustomDebugStringConvertibleP", "init"]
+- ["s17CustomReflectableP", "init"]
+- ["s23CustomStringConvertibleP", "init"]
+- ["Se", "init"]
+- ["SE", "init"]
+- ["SQ", "init"]
+- ["s25ExpressibleByArrayLiteralP", "init"]
+- ["SH", "init"]
+- ["SM", "init"]
+- ["Sk", "init"]
+- ["Sm", "init"]
+- ["ST", "init"]
+- ["10Foundation13_CFBridgeableP", "init"]
+- ["s24_DestructorSafeContainerP", "init"]
+- ["s19_HasContiguousBytesP", "init"]
+- ["s35_HasCustomAnyHashableRepresentationP", "init"]
+- ["10Foundation13_NSBridgeableP", "init"]
+- ["s21_ObjectiveCBridgeableP", "init"]
+depends-nominal:
+- "Sa"
+- "s13ArrayProtocolP"
+- "SK"
+- "Sl"
+- "s28CustomDebugStringConvertibleP"
+- "s17CustomReflectableP"
+- "s23CustomStringConvertibleP"
+- "Se"
+- "SE"
+- "SQ"
+- "s25ExpressibleByArrayLiteralP"
+- "SH"
+- "SM"
+- "Sk"
+- "Sm"
+- "ST"
+- "10Foundation13_CFBridgeableP"
+- "s24_DestructorSafeContainerP"
+- "s19_HasContiguousBytesP"
+- "s35_HasCustomAnyHashableRepresentationP"
+- "10Foundation13_NSBridgeableP"
+- "s21_ObjectiveCBridgeableP"
+depends-dynamic-lookup:
+depends-external:
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Glibc.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Dispatch.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Foundation.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/swiftRoaringTests.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/XCTest.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include/roaring.h"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
+interface-hash: "9f83df00d7908741190c29dfd12144ee"

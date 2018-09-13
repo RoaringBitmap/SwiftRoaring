@@ -1,14 +1,52 @@
 ### Swift dependencies file v0 ###
 provides-top-level:
+- "RoaringBitmap"
+- "testing"
+- "bitmap"
 provides-nominal:
+- "12SwiftRoaring0B6BitmapC"
+- "12SwiftRoaring7testingV"
 provides-member:
+- ["12SwiftRoaring0B6BitmapC", ""]
+- ["12SwiftRoaring7testingV", ""]
 depends-top-level:
+- "AssignmentPrecedence"
+- "Bool"
+- "FloatLiteralType"
+- "IntegerLiteralType"
+- "RoaringBitmap"
+- "StringLiteralType"
+- "UInt32"
+- "UnsafeMutablePointer"
+- "bitmap"
+- !private "croaring"
+- "print"
+- "roaring_bitmap_t"
+- "testing"
 depends-member:
+- ["12SwiftRoaring0B6BitmapC", "Bool"]
+- ["12SwiftRoaring0B6BitmapC", "UInt32"]
+- ["12SwiftRoaring0B6BitmapC", "UnsafeMutablePointer"]
+- ["12SwiftRoaring0B6BitmapC", "add"]
+- ["12SwiftRoaring0B6BitmapC", "contains"]
+- !private ["12SwiftRoaring0B6BitmapC", "croaring"]
+- ["12SwiftRoaring0B6BitmapC", "free"]
+- ["12SwiftRoaring0B6BitmapC", "init"]
+- ["12SwiftRoaring0B6BitmapC", "print"]
+- ["12SwiftRoaring0B6BitmapC", "ptr"]
+- ["12SwiftRoaring0B6BitmapC", "remove"]
+- ["12SwiftRoaring0B6BitmapC", "roaring_bitmap_t"]
+- ["12SwiftRoaring7testingV", "init"]
+- ["12SwiftRoaring7testingV", "text"]
 depends-nominal:
+- "12SwiftRoaring0B6BitmapC"
+- "12SwiftRoaring7testingV"
 depends-dynamic-lookup:
 depends-external:
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
-- "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
-interface-hash: "d41d8cd98f00b204e9800998ecf8427e"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include/roaring.h"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
+interface-hash: "54f79e8db0b8337351abdaf102eeb0c2"

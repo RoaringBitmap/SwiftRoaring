@@ -1,0 +1,22 @@
+client:
+  name: basic
+tools: {}
+targets:
+  "main": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
+  "test": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
+  "croaring-release.module": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
+default: "main"
+commands: 
+  "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o":
+    tool: clang
+    description: "Compile croaring roaring.c"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/roaring.c"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
+    args: ["/usr/bin/clang","-target","x86_64-unknown-linux","--sysroot","/","-fPIC","-O2","-DSWIFT_PACKAGE=1","-fblocks","-fmodules","-fmodule-name=croaring","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/include","-fmodules-cache-path=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-march=native","-MD","-MT","dependencies","-MF","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.d","-c","/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/roaring.c","-o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
+    deps: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.d"
+
+  "<C.croaring-release.module>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
+    outputs: ["<croaring-release.module>"]
+

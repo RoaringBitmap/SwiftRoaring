@@ -1,7 +1,7 @@
 import XCTest
 
-import testTests
+import swiftRoaringTests
 
 var tests = [XCTestCaseEntry]()
-tests += testTests.allTests()
+tests += swiftRoaringTests.allTests()
 XCTMain(tests)

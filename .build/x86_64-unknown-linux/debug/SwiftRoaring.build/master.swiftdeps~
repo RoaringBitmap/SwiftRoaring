@@ -1,5 +1,5 @@
-version: "Swift version 4.1.3 (swift-4.1.3-RELEASE)"
-options: "cfacc9d68057b511567de5f136ce47fd"
-build_time: [1536762927, 860300068]
+version: "Swift version 4.2-dev (LLVM 6aab835160, Clang d7740f5f6e, Swift 6e773a0518)"
+options: "81ad7699cfedc895cd608e601173a35a"
+build_time: [1536875355, 62102485]
 inputs:
-  "/home/jeremiepiotte/SwiftRoaring/Sources/SwiftRoaring/main.swift": [1536614520, 0]
+  "/home/jeremie/Desktop/SwiftRoaring/Sources/SwiftRoaring/main.swift": [1536875311, 0]

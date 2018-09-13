@@ -1,15 +1,39 @@
 ### Swift dependencies file v0 ###
 provides-top-level:
+- "RoaringBitmap"
 provides-nominal:
+- "12SwiftRoaring0B6BitmapC"
 provides-member:
+- ["12SwiftRoaring0B6BitmapC", ""]
 depends-top-level:
+- "AssignmentPrecedence"
+- "Bool"
+- "RoaringBitmap"
+- "UInt32"
+- "UnsafeMutablePointer"
+- !private "croaring"
+- "roaring_bitmap_t"
 depends-member:
+- ["12SwiftRoaring0B6BitmapC", "Bool"]
+- ["12SwiftRoaring0B6BitmapC", "UInt32"]
+- ["12SwiftRoaring0B6BitmapC", "UnsafeMutablePointer"]
+- ["12SwiftRoaring0B6BitmapC", "add"]
+- ["12SwiftRoaring0B6BitmapC", "contains"]
+- !private ["12SwiftRoaring0B6BitmapC", "croaring"]
+- ["12SwiftRoaring0B6BitmapC", "free"]
+- ["12SwiftRoaring0B6BitmapC", "init"]
+- ["12SwiftRoaring0B6BitmapC", "print"]
+- ["12SwiftRoaring0B6BitmapC", "ptr"]
+- ["12SwiftRoaring0B6BitmapC", "remove"]
+- ["12SwiftRoaring0B6BitmapC", "roaring_bitmap_t"]
 depends-nominal:
+- "12SwiftRoaring0B6BitmapC"
 depends-dynamic-lookup:
 depends-external:
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
-- "/home/jeremiepiotte/SwiftRoaring/Sources/CRoaring/include/roaring.h"
-- "/opt/swift-4.1.3-RELEASE-ubuntu16.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
-- "/home/jeremiepiotte/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
-interface-hash: "57e6e37cf4aecfb054546f79c5bec150"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include/roaring.h"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
+interface-hash: "797b19308608ef1fc171cb9d950224e6"

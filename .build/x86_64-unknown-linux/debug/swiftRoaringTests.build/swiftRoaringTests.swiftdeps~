@@ -1,0 +1,69 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "swiftRoaringTests"
+provides-nominal:
+- "17swiftRoaringTestsAAC"
+provides-member:
+- ["17swiftRoaringTestsAAC", ""]
+depends-top-level:
+- "Array"
+- !private "BooleanLiteralType"
+- !private "FloatLiteralType"
+- !private "IntegerLiteralType"
+- !private "RoaringBitmap"
+- "StringLiteralType"
+- !private "XCTAssertEqual"
+- "XCTestCase"
+- "swiftRoaringTests"
+depends-member:
+- !private ["6XCTest8ListableP", "RoaringBitmap"]
+- !private ["6XCTest8ListableP", "XCTAssertEqual"]
+- ["6XCTest8ListableP", ""]
+- !private ["6XCTest8ListableP", "init"]
+- !private ["6XCTest8ListableP", "init"]
+- ["6XCTest8ListableP", "testExample"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "RoaringBitmap"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "XCTAssertEqual"]
+- ["6XCTest24PerformanceMeterDelegateP", ""]
+- !private ["6XCTest24PerformanceMeterDelegateP", "init"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "init"]
+- ["6XCTest24PerformanceMeterDelegateP", "testExample"]
+- !private ["12SwiftRoaring0B6BitmapC", "init"]
+- !private ["6XCTestAAC", "RoaringBitmap"]
+- !private ["6XCTestAAC", "XCTAssertEqual"]
+- ["6XCTestAAC", "allTests"]
+- !private ["6XCTestAAC", "init"]
+- ["6XCTestAAC", "testExample"]
+- !private ["6XCTest0A4CaseC", "RoaringBitmap"]
+- !private ["6XCTest0A4CaseC", "XCTAssertEqual"]
+- ["6XCTest0A4CaseC", ""]
+- ["6XCTest0A4CaseC", "allTests"]
+- ["6XCTest0A4CaseC", "init"]
+- !private ["6XCTest0A4CaseC", "init"]
+- ["6XCTest0A4CaseC", "testExample"]
+- !private ["17swiftRoaringTestsAAC", "RoaringBitmap"]
+- !private ["17swiftRoaringTestsAAC", "XCTAssertEqual"]
+- ["17swiftRoaringTestsAAC", "allTests"]
+- ["17swiftRoaringTestsAAC", "init"]
+- ["17swiftRoaringTestsAAC", "testExample"]
+depends-nominal:
+- "6XCTest8ListableP"
+- "6XCTest24PerformanceMeterDelegateP"
+- !private "12SwiftRoaring0B6BitmapC"
+- "6XCTestAAC"
+- "6XCTest0A4CaseC"
+- "17swiftRoaringTestsAAC"
+depends-dynamic-lookup:
+depends-external:
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Glibc.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/SwiftRoaring.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Dispatch.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Foundation.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/XCTest.swiftmodule"
+- "/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include/roaring.h"
+- "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
+- "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
+interface-hash: "129a4987256383871f6e1bdbc177c453"
