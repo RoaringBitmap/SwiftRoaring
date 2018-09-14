@@ -100,7 +100,17 @@ Swift 4.1 or better
 Here is a simplified but complete example:
 
 ```swift
-coming
+import SwiftRoaring
+
+//Create a new Roaring Bitmap
+var bitmap = SwiftRoaring()
+
+//Example: Add Integer
+bitmap.add(x: 99999)
+
+//See documentation for more functionalities!
+
+
 ```
 
 ### Documentation
@@ -113,4 +123,4 @@ https://groups.google.com/forum/#!forum/roaring-bitmaps
 
 ### Compatibility with Java RoaringBitmap library
 
-You can read bitmaps in Go, Java, C, C++ that have been serialized in Java, Java, C, C++.
+You can read bitmaps in Go, Java, C, C++ that have been serialized in Java, C, C++.
