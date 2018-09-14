@@ -1,28 +1,22 @@
 ### Swift dependencies file v0 ###
 provides-top-level:
 - "RoaringBitmap"
-- "testing"
-- "bitmap"
+- "helloworld"
 provides-nominal:
 - "12SwiftRoaring0B6BitmapC"
-- "12SwiftRoaring7testingV"
 provides-member:
 - ["12SwiftRoaring0B6BitmapC", ""]
-- ["12SwiftRoaring7testingV", ""]
 depends-top-level:
 - "AssignmentPrecedence"
 - "Bool"
-- "FloatLiteralType"
-- "IntegerLiteralType"
 - "RoaringBitmap"
-- "StringLiteralType"
+- !private "StringLiteralType"
 - "UInt32"
 - "UnsafeMutablePointer"
-- "bitmap"
 - !private "croaring"
-- "print"
+- "helloworld"
+- !private "print"
 - "roaring_bitmap_t"
-- "testing"
 depends-member:
 - ["12SwiftRoaring0B6BitmapC", "Bool"]
 - ["12SwiftRoaring0B6BitmapC", "UInt32"]
@@ -36,11 +30,8 @@ depends-member:
 - ["12SwiftRoaring0B6BitmapC", "ptr"]
 - ["12SwiftRoaring0B6BitmapC", "remove"]
 - ["12SwiftRoaring0B6BitmapC", "roaring_bitmap_t"]
-- ["12SwiftRoaring7testingV", "init"]
-- ["12SwiftRoaring7testingV", "text"]
 depends-nominal:
 - "12SwiftRoaring0B6BitmapC"
-- "12SwiftRoaring7testingV"
 depends-dynamic-lookup:
 depends-external:
 - "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Swift.swiftmodule"
@@ -49,4 +40,4 @@ depends-external:
 - "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
-interface-hash: "54f79e8db0b8337351abdaf102eeb0c2"
+interface-hash: "cf6bb453431b1ed4008ff408ef932a85"

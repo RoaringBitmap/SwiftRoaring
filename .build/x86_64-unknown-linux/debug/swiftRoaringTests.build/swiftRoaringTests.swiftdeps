@@ -5,46 +5,64 @@ provides-nominal:
 - "17swiftRoaringTestsAAC"
 provides-member:
 - ["17swiftRoaringTestsAAC", ""]
+- ["17swiftRoaringTestsAAC", "allTests"]
 depends-top-level:
-- "Array"
-- "StringLiteralType"
-- !private "SwiftRoaring"
-- !private "XCTAssertEqual"
+- "AssignmentPrecedence"
+- "RoaringBitmap"
+- "String"
+- !private "StringLiteralType"
+- "Void"
 - "XCTestCase"
 - "swiftRoaringTests"
 depends-member:
-- !private ["6XCTest8ListableP", "SwiftRoaring"]
-- !private ["6XCTest8ListableP", "XCTAssertEqual"]
+- !private ["6XCTest8ListableP", "RoaringBitmap"]
 - ["6XCTest8ListableP", ""]
 - !private ["6XCTest8ListableP", "init"]
 - !private ["6XCTest8ListableP", "init"]
-- ["6XCTest8ListableP", "testExample"]
-- !private ["6XCTest24PerformanceMeterDelegateP", "SwiftRoaring"]
-- !private ["6XCTest24PerformanceMeterDelegateP", "XCTAssertEqual"]
+- !private ["6XCTest8ListableP", "rbm"]
+- !private ["6XCTest8ListableP", "setUp"]
+- !private ["6XCTest8ListableP", "testExample"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "RoaringBitmap"]
 - ["6XCTest24PerformanceMeterDelegateP", ""]
 - !private ["6XCTest24PerformanceMeterDelegateP", "init"]
 - !private ["6XCTest24PerformanceMeterDelegateP", "init"]
-- ["6XCTest24PerformanceMeterDelegateP", "testExample"]
-- !private ["6XCTestAAC", "SwiftRoaring"]
-- !private ["6XCTestAAC", "XCTAssertEqual"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "rbm"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "setUp"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "testExample"]
+- !private ["12SwiftRoaring0B6BitmapC", "init"]
+- ["6XCTestAAC", "RoaringBitmap"]
+- ["6XCTestAAC", "String"]
+- ["6XCTestAAC", "Void"]
 - ["6XCTestAAC", "allTests"]
 - !private ["6XCTestAAC", "init"]
+- ["6XCTestAAC", "rbm"]
+- ["6XCTestAAC", "setUp"]
+- ["6XCTestAAC", "swiftRoaringTests"]
 - ["6XCTestAAC", "testExample"]
-- !private ["6XCTest0A4CaseC", "SwiftRoaring"]
-- !private ["6XCTest0A4CaseC", "XCTAssertEqual"]
+- ["6XCTest0A4CaseC", "RoaringBitmap"]
+- ["6XCTest0A4CaseC", "String"]
+- ["6XCTest0A4CaseC", "Void"]
 - ["6XCTest0A4CaseC", ""]
 - ["6XCTest0A4CaseC", "allTests"]
 - ["6XCTest0A4CaseC", "init"]
 - !private ["6XCTest0A4CaseC", "init"]
+- ["6XCTest0A4CaseC", "rbm"]
+- ["6XCTest0A4CaseC", "setUp"]
+- ["6XCTest0A4CaseC", "swiftRoaringTests"]
 - ["6XCTest0A4CaseC", "testExample"]
-- !private ["17swiftRoaringTestsAAC", "SwiftRoaring"]
-- !private ["17swiftRoaringTestsAAC", "XCTAssertEqual"]
+- ["17swiftRoaringTestsAAC", "RoaringBitmap"]
+- ["17swiftRoaringTestsAAC", "String"]
+- ["17swiftRoaringTestsAAC", "Void"]
 - ["17swiftRoaringTestsAAC", "allTests"]
 - ["17swiftRoaringTestsAAC", "init"]
+- ["17swiftRoaringTestsAAC", "rbm"]
+- ["17swiftRoaringTestsAAC", "setUp"]
+- ["17swiftRoaringTestsAAC", "swiftRoaringTests"]
 - ["17swiftRoaringTestsAAC", "testExample"]
 depends-nominal:
 - "6XCTest8ListableP"
 - "6XCTest24PerformanceMeterDelegateP"
+- !private "12SwiftRoaring0B6BitmapC"
 - "6XCTestAAC"
 - "6XCTest0A4CaseC"
 - "17swiftRoaringTestsAAC"
@@ -61,4 +79,4 @@ depends-external:
 - "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
-interface-hash: "129a4987256383871f6e1bdbc177c453"
+interface-hash: "dacc141bb805395722351a848709ec87"

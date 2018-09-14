@@ -1,5 +1,5 @@
 version: "Swift version 4.2-dev (LLVM 6aab835160, Clang d7740f5f6e, Swift 6e773a0518)"
 options: "81ad7699cfedc895cd608e601173a35a"
-build_time: [1536875355, 62102485]
+build_time: [1536932848, 882361901]
 inputs:
-  "/home/jeremie/Desktop/SwiftRoaring/Sources/SwiftRoaring/main.swift": [1536875311, 0]
+  "/home/jeremie/Desktop/SwiftRoaring/Sources/SwiftRoaring/main.swift": [1536932845, 0]

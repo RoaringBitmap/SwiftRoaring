@@ -18,7 +18,7 @@ let package = Package(
         ),
         .testTarget(
             name: "swiftRoaringTests",
-            dependencies:["SwiftRoaring", "croaring"]
+            dependencies:["SwiftRoaring"]
         )
     ]
 )

@@ -2,21 +2,113 @@ client:
   name: basic
 tools: {}
 targets:
-  "main": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
-  "test": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
+  "main": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<SwiftRoaring-release.exe>","<SwiftRoaring-release.module>","<croaring-release.module>"]
+  "test": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule","<SwiftRoaring-release.exe>","<SwiftRoaring-release.module>","<SwiftRoaringPackageTests-release.test>","<croaring-release.module>","<swiftRoaringTests-release.module>"]
+  "SwiftRoaring-release.exe": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring","<SwiftRoaring-release.exe>"]
+  "SwiftRoaring-release.module": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule","<SwiftRoaring-release.module>"]
+  "SwiftRoaringPackageTests-release.module": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.swiftmodule","<SwiftRoaringPackageTests-release.module>"]
+  "SwiftRoaringPackageTests-release.test": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest","<SwiftRoaringPackageTests-release.test>"]
   "croaring-release.module": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","<croaring-release.module>"]
+  "swiftRoaringTests-release.module": ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule","<swiftRoaringTests-release.module>"]
 default: "main"
 commands: 
   "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o":
     tool: clang
     description: "Compile croaring roaring.c"
-    inputs: ["/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/roaring.c"]
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/roaring.c"]
     outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
-    args: ["/usr/bin/clang","-target","x86_64-unknown-linux","--sysroot","/","-fPIC","-O2","-DSWIFT_PACKAGE=1","-fblocks","-fmodules","-fmodule-name=croaring","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/include","-fmodules-cache-path=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-march=native","-MD","-MT","dependencies","-MF","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.d","-c","/home/jeremie/Desktop/SwiftRoaring/Sources/croaring/roaring.c","-o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
+    args: ["/usr/bin/clang","-target","x86_64-unknown-linux","--sysroot","/","-fPIC","-O2","-DSWIFT_PACKAGE=1","-fblocks","-fmodules","-fmodule-name=croaring","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include","-fmodules-cache-path=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-march=native","-MD","-MT","dependencies","-MF","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.d","-c","/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/roaring.c","-o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
     deps: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.d"
+
+  "<C.SwiftRoaring-release.exe>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring"]
+    outputs: ["<SwiftRoaring-release.exe>"]
+
+  "<C.SwiftRoaring-release.module>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule"]
+    outputs: ["<SwiftRoaring-release.module>"]
+
+  "<C.SwiftRoaringPackageTests-release.module>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.swiftmodule"]
+    outputs: ["<SwiftRoaringPackageTests-release.module>"]
+
+  "<C.SwiftRoaringPackageTests-release.test>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest"]
+    outputs: ["<SwiftRoaringPackageTests-release.test>"]
 
   "<C.croaring-release.module>":
     tool: phony
     inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
     outputs: ["<croaring-release.module>"]
+
+  "<C.swiftRoaringTests-release.module>":
+    tool: phony
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule"]
+    outputs: ["<swiftRoaringTests-release.module>"]
+
+  "C.SwiftRoaring-release.exe":
+    tool: shell
+    description: "Linking ./.build/x86_64-unknown-linux/release/SwiftRoaring"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.build/main.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring"]
+    args: ["/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/bin/swiftc","-target","x86_64-unknown-linux","-sdk","/","-L","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release","-o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring","-module-name","SwiftRoaring","-emit-executable","-Xlinker","-rpath=$ORIGIN","@/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.product/Objects.LinkFileList","-Xcc","-march=native"]
+
+  "C.SwiftRoaring-release.module":
+    tool: swift-compiler
+    executable: "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/bin/swiftc"
+    module-name: "SwiftRoaring"
+    module-output-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","/home/jeremie/Desktop/SwiftRoaring/Sources/SwiftRoaring/main.swift"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.build/main.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule"]
+    import-paths: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release"]
+    temps-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.build"
+    objects: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.build/main.swift.o"]
+    other-args: ["-swift-version","4.2","-target","x86_64-unknown-linux","-sdk","/","-O","-j12","-DSWIFT_PACKAGE","-Xcc","-fmodule-map-file=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/module.modulemap","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include","-module-cache-path","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-Xfrontend","-color-diagnostics","-Xcc","-march=native"]
+    sources: ["/home/jeremie/Desktop/SwiftRoaring/Sources/SwiftRoaring/main.swift"]
+    is-library: false
+    enable-whole-module-optimization: true
+    num-threads: "12"
+
+  "C.SwiftRoaringPackageTests-release.module":
+    tool: swift-compiler
+    executable: "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/bin/swiftc"
+    module-name: "SwiftRoaringPackageTests"
+    module-output-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.swiftmodule"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule","/home/jeremie/Desktop/SwiftRoaring/Tests/LinuxMain.swift"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.build/LinuxMain.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.swiftmodule"]
+    import-paths: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release"]
+    temps-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.build"
+    objects: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.build/LinuxMain.swift.o"]
+    other-args: ["-swift-version","4.2","-target","x86_64-unknown-linux","-sdk","/","-O","-j12","-DSWIFT_PACKAGE","-Xcc","-fmodule-map-file=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/module.modulemap","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include","-module-cache-path","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-Xfrontend","-color-diagnostics","-Xcc","-march=native"]
+    sources: ["/home/jeremie/Desktop/SwiftRoaring/Tests/LinuxMain.swift"]
+    is-library: false
+    enable-whole-module-optimization: true
+    num-threads: "12"
+
+  "C.SwiftRoaringPackageTests-release.test":
+    tool: shell
+    description: "Linking ./.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.build/LinuxMain.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/XCTestManifests.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/swiftRoaringTests.swift.o"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest"]
+    args: ["/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/bin/swiftc","-target","x86_64-unknown-linux","-sdk","/","-L","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release","-o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.xctest","-module-name","SwiftRoaringPackageTests","-emit-executable","-Xlinker","-rpath=$ORIGIN","@/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaringPackageTests.product/Objects.LinkFileList","-Xcc","-march=native"]
+
+  "C.swiftRoaringTests-release.module":
+    tool: swift-compiler
+    executable: "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/bin/swiftc"
+    module-name: "swiftRoaringTests"
+    module-output-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule"
+    inputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/SwiftRoaring.swiftmodule","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/roaring.c.o","/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/XCTestManifests.swift","/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/swiftRoaringTests.swift"]
+    outputs: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/XCTestManifests.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/swiftRoaringTests.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.swiftmodule"]
+    import-paths: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release"]
+    temps-path: "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build"
+    objects: ["/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/XCTestManifests.swift.o","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/swiftRoaringTests.build/swiftRoaringTests.swift.o"]
+    other-args: ["-swift-version","4.2","-target","x86_64-unknown-linux","-sdk","/","-O","-j12","-DSWIFT_PACKAGE","-Xcc","-fmodule-map-file=/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/croaring.build/module.modulemap","-I","/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include","-module-cache-path","/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/release/ModuleCache","-Xfrontend","-color-diagnostics","-Xcc","-march=native"]
+    sources: ["/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/XCTestManifests.swift","/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/swiftRoaringTests.swift"]
+    is-library: true
+    enable-whole-module-optimization: true
+    num-threads: "12"
 

@@ -1,16 +1,27 @@
 import XCTest
 @testable import SwiftRoaring
 
-final class swiftRoaringTests: XCTestCase {
+
+extension swiftRoaringTests {
+    static var allTests : [(String, (swiftRoaringTests) -> () throws -> Void)] {
+        return [
+            ("testExample", testExample)
+        ]
+    }
+}
+
+class swiftRoaringTests: XCTestCase {
+    var rbm: RoaringBitmap!
+
+    override func setUp() {
+        super.setUp()
+        rbm = RoaringBitmap()
+    }
+
     func testExample() {
-        //let bitmap = RoaringBitmap()
+        
         // bitmap.add(x: 35)
         // XCTAssertEqual(bitmap.contains(x: 35), true)
         //XCTAssertEqual(true, true)
     }
-
-
-    static var allTests = [
-        ("testExample", testExample),
-    ]
 }

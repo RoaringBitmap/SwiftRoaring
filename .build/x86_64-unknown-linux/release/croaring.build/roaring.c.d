@@ -1,7 +1,7 @@
 dependencies: \
-  /home/jeremie/Desktop/SwiftRoaring/Sources/croaring/roaring.c \
+  /home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/roaring.c \
   /usr/lib/llvm-6.0/lib/clang/6.0.0/include/module.modulemap \
-  /home/jeremie/Desktop/SwiftRoaring/Sources/croaring/include/roaring.h \
+  /home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include/roaring.h \
   /usr/lib/llvm-6.0/lib/clang/6.0.0/include/stdbool.h \
   /usr/lib/llvm-6.0/lib/clang/6.0.0/include/stdint.h \
   //usr/include/stdint.h \
