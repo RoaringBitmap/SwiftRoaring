@@ -5,7 +5,9 @@ import XCTest
 extension swiftRoaringTests {
     static var allTests : [(String, (swiftRoaringTests) -> () throws -> Void)] {
         return [
-            ("testExample", testExample)
+            ("testAdd", testAdd),
+            ("testRemove", testRemove),
+            ("testClear", testClear)
         ]
     }
 }
@@ -18,10 +20,24 @@ class swiftRoaringTests: XCTestCase {
         rbm = RoaringBitmap()
     }
 
-    func testExample() {
-        
-        // bitmap.add(x: 35)
-        // XCTAssertEqual(bitmap.contains(x: 35), true)
-        //XCTAssertEqual(true, true)
+    func testAdd() {
+        rbm.add(x: 35)
+        XCTAssertEqual(rbm.contains(x: 35), true)
     }
+
+    func testRemove() {
+        rbm.add(x: 35)
+        rbm.remove(x: 35)
+        XCTAssertEqual(rbm.contains(x: 35), false)
+    }
+
+    func testClear() {
+        for k in stride(from: 0, to: 100000000, by: 100 ) {
+            rbm.add(x: UInt32(k))
+        }
+        XCTAssertEqual(rbm.isEmpty(), false)
+        rbm.clear()
+        XCTAssertEqual(rbm.isEmpty(), true)
+    }
+
 }

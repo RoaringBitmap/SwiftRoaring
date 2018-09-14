@@ -1,6 +1,6 @@
 version: "Swift version 4.2-dev (LLVM 6aab835160, Clang d7740f5f6e, Swift 6e773a0518)"
 options: "20cab90b82a50209331a5115c3502bed"
-build_time: [1536934135, 289112229]
+build_time: [1536950819, 173919426]
 inputs:
-  "/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/XCTestManifests.swift": [1536934129, 0]
-  "/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/swiftRoaringTests.swift": [1536934085, 0]
+  "/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/XCTestManifests.swift": [1536934257, 0]
+  "/home/jeremie/Desktop/SwiftRoaring/Tests/swiftRoaringTests/swiftRoaringTests.swift": [1536935777, 0]

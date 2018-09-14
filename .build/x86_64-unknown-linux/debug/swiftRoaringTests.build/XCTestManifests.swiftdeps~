@@ -1,10 +1,25 @@
 ### Swift dependencies file v0 ###
 provides-top-level:
+- "allTests"
 provides-nominal:
 provides-member:
 depends-top-level:
+- "XCTestCaseEntry"
+- "allTests"
+- !private "swiftRoaringTests"
+- !private "testCase"
 depends-member:
+- !private ["6XCTest8ListableP", "allTests"]
+- !private ["6XCTest24PerformanceMeterDelegateP", "allTests"]
+- !private ["6XCTestAAC", "allTests"]
+- !private ["6XCTest0A4CaseC", "allTests"]
+- !private ["17swiftRoaringTestsAAC", "allTests"]
 depends-nominal:
+- !private "6XCTest8ListableP"
+- !private "6XCTest24PerformanceMeterDelegateP"
+- !private "6XCTestAAC"
+- !private "6XCTest0A4CaseC"
+- !private "17swiftRoaringTestsAAC"
 depends-dynamic-lookup:
 depends-external:
 - "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/Glibc.swiftmodule"
@@ -18,4 +33,4 @@ depends-external:
 - "/home/jeremie/Downloads/swift-DEVELOPMENT-SNAPSHOT-2018-09-10-a-ubuntu18.04/usr/lib/swift/linux/x86_64/glibc.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/CRoaring.build/module.modulemap"
 - "/home/jeremie/Desktop/SwiftRoaring/.build/x86_64-unknown-linux/debug/croaring.build/module.modulemap"
-interface-hash: "d41d8cd98f00b204e9800998ecf8427e"
+interface-hash: "1f055c3b5f27ec04cc14b70a98464945"
