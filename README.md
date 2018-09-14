@@ -40,8 +40,8 @@ Coming.
 Create a directory where you will create your application:
 
 ```bash
-mkdir fun
-cd fun
+mkdir foo
+cd foo
 swift package init --type executable
 ```
 
@@ -52,13 +52,13 @@ Then edit ``Package.swift`` so that it reads something like this:
 import PackageDescription
 
 let package = Package(
-    name: "fun",
+    name: "foo",
     dependencies: [
    .package(url: "https://github.com/piotte13/SwiftRoaring",  from: "0.0.1")
     ],
     targets: [
         .target(
-            name: "fun",
+            name: "foo",
             dependencies: ["SwiftRoaring"]),
     ]
 )
