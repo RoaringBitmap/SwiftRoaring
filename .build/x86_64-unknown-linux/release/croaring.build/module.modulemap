@@ -1,4 +1,0 @@
-module croaring {
-    umbrella "/home/jeremie/Desktop/SwiftRoaring/Sources/CRoaring/include"
-    export *
-}
