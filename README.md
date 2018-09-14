@@ -103,7 +103,7 @@ Here is a simplified but complete example:
 import SwiftRoaring
 
 //Create a new Roaring Bitmap
-var bitmap = SwiftRoaring()
+var bitmap = RoaringBitmap()
 
 //Example: Add Integer
 bitmap.add(x: 99999)
