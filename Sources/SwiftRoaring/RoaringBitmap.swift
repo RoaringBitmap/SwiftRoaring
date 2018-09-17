@@ -367,7 +367,7 @@ public class RoaringBitmap: Sequence {
     /**
     * Get the cardinality of the bitmap (number of elements).
     */
-    public func count(x: UInt32) -> UInt64 {
+    public func count() -> UInt64 {
         return croaring.roaring_bitmap_get_cardinality(self.ptr)
     }
 
@@ -752,9 +752,12 @@ public class RoaringBitmap: Sequence {
         }
         
         mutating public func next() -> UInt32? {
-            let val = i.pointee.current_value
-            croaring.roaring_advance_uint32_iterator(self.i)
-            return val
+            if(i.pointee.has_value){
+                let val = i.pointee.current_value 
+                croaring.roaring_advance_uint32_iterator(self.i)
+                return val
+            }
+            return nil
         }
         
     }
