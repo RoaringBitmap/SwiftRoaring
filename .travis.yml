@@ -6,6 +6,6 @@ before_script:
 script:
 - swift package generate-xcodeproj
 - xcodebuild -list
-- set -o pipefail && xcodebuild -scheme SwiftRoaring -enableCodeCoverage YES clean build test | xcpretty
+- set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES clean build test | xcpretty
 after_success:
 - bash <(curl -s https://codecov.io/bash) -J 'TaskerServerLib'
