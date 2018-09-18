@@ -1,6 +1,7 @@
 # SwiftRoaring
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift4-compatible-green.svg?style=flat" alt="Swift 4 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
+[![Build Status](https://travis-ci.org/piotte13/SwiftRoaring.svg?branch=master)](https://travis-ci.org/piotte13/SwiftRoaring)
 
 Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
 
