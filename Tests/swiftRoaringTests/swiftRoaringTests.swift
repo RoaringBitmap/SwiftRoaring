@@ -8,7 +8,10 @@ extension swiftRoaringTests {
             ("testAdd", testAdd),
             ("testRemove", testRemove),
             ("testClear", testClear),
-            ("testIterator", testIterator)
+            ("testIterator", testIterator),
+            ("testInitRange", testInitRange),
+            ("testInitArray", testInitArray),
+            ("testCase1", testCase1),
         ]
     }
 }
@@ -55,4 +58,28 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertEqual(count, 0)
     }
 
+    func testInitRange(){
+        let rbmRange = RoaringBitmap(min: 0,max: 1000,step: 50)
+        for k in stride(from: 0, to: 1000, by: 50 ) {
+            XCTAssertEqual(rbmRange.contains(x: UInt32(k)), true)
+        }
+    }
+
+    func testInitCapacity(){
+        //TODO
+    }
+
+    func testInitArray(){
+        var array = [0,1,2,4,5,6]
+        let rbmArray = RoaringBitmap(vals: array.map{ UInt32($0) })
+        for i in array {
+            XCTAssertEqual(rbmArray.contains(x: UInt32(i)), true)
+        }
+    }
+
+    func testCase1(){
+        rbm.addRangeClosed(min:0, max:500)
+        let cpy = rbm.copy()
+        cpy.containsRange(start:0, end:501)
+    }
 }

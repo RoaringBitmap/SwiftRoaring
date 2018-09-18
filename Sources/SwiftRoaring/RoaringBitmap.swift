@@ -34,17 +34,10 @@ public class RoaringBitmap: Sequence {
     /**
     * Creates a new bitmap from a pointer of uint32_t integers
     */
-    public init(n_args: size_t, vals: inout [UInt32]) {
-        self.ptr = croaring.roaring_bitmap_of_ptr(n_args, &vals)!
+    public init(vals: [UInt32]) {
+        let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: vals)
+        self.ptr = croaring.roaring_bitmap_of_ptr(vals.count, ptr)!
     }
-
-    // TODO: FIX THIS CONSTRUCTOR
-    // /**
-    // * Creates a new bitmap from a list of uint32_t integers
-    // */
-    // public init(list: [UInt32]) {
-    //     self.ptr = croaring.roaring_bitmap_of(list.count, list)!
-    // }
 
     /////////////////////////////////////////////////////////////////////////////
     ///                             OPERATORS                                 ///
@@ -402,11 +395,6 @@ public class RoaringBitmap: Sequence {
     public func describe() {
         croaring.roaring_bitmap_printf_describe(self.ptr)
     }
-    
-
-
-
-
 
     /**
     * Convert the bitmap to an array. Write the output to "ans",
