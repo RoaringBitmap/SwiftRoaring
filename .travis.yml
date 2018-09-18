@@ -1,11 +1,10 @@
-os:
-  - linux
-  - osx
-language: generic
-sudo: required
-dist: trusty
-osx_image: xcode9.4
-install:
-  - eval "$(curl -sL https://swiftenv.fuller.li/install.sh)"
+language: swift
+os: osx
+osx_image: xcode9.2
+before_script:
+- gem install xcpretty
 script:
-  - swift build
+- swift package generate-xcodeproj
+- set -o pipefail && xcodebuild -scheme TaskerServer-Package -enableCodeCoverage YES clean build test | xcpretty
+after_success:
+- bash <(curl -s https://codecov.io/bash) -J 'TaskerServerLib'
