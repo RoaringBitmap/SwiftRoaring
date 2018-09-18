@@ -79,7 +79,22 @@ class swiftRoaringTests: XCTestCase {
 
     func testCase1(){
         rbm.addRangeClosed(min:0, max:500)
-        let cpy = rbm.copy()
+        var cpy = rbm.copy()
         cpy.containsRange(start:0, end:501)
+        XCTAssertEqual(cpy.maximum(), 500)
+        XCTAssertEqual(cpy.minimum(), 0)
+        XCTAssertEqual(cpy.rank(value: 499), 500)
+        var element = UInt32(800)
+        //TODO: FIX SELECT
+        // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
+        // XCTAssertEqual(cpy.maximum(), 800)
+        let flip = cpy.flip(rangeStart: 0, rangeEnd:501)
+        XCTAssertEqual(flip.isEmpty(), true)
+        cpy.flipInplace(rangeStart: 0, rangeEnd:501)
+        XCTAssertEqual(cpy.isEmpty(), true)
+        cpy = rbm.copy()
+        XCTAssertEqual(cpy.equals(rbm), true)
+        XCTAssertEqual(cpy == rbm, true)
+        XCTAssertEqual(cpy != rbm, false)
     }
 }

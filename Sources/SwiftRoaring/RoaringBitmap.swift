@@ -582,8 +582,8 @@ public class RoaringBitmap: Sequence {
     public static func ==(left: RoaringBitmap, right: RoaringBitmap) -> Bool{
         return left.equals(right)
     }
-    public static func !==(left: RoaringBitmap, right: RoaringBitmap) -> Bool{
-        return !left.equals(right)
+    public static func !=(left: RoaringBitmap, right: RoaringBitmap) -> Bool {
+        return !(left == right)
     }
 
     /**
