@@ -5,6 +5,6 @@ before_script:
 - gem install xcpretty
 script:
 - swift package generate-xcodeproj
-- set -o pipefail && xcodebuild -scheme TaskerServer-Package -enableCodeCoverage YES clean build test | xcpretty
+- set -o pipefail && xcodebuild -scheme SwiftRoaring -enableCodeCoverage YES clean build test | xcpretty
 after_success:
 - bash <(curl -s https://codecov.io/bash) -J 'TaskerServerLib'
