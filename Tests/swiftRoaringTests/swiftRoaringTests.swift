@@ -68,7 +68,7 @@ class swiftRoaringTests: XCTestCase {
     func testInitCapacity(){
         //TODO
         let rbmCapacity = RoaringBitmap(capacity: 8)
-        
+
     }
 
     func testInitArray(){
@@ -108,8 +108,8 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(rbm.removeRunCompression())
         var rbmap = RoaringBitmap()
         rbmap.add(value: 1)
-        rbmap.describe()
-        rbmap.print()
+        // rbmap.describe()
+        // rbmap.print()
         var array = rbm.toArray()
         for i in rbm {
             if let index = array.index(of: i) {
