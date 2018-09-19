@@ -1,12 +1,13 @@
 language: swift
 os: osx
-osx_image: xcode9.2
+osx_image: 
+- xcode9
+- xcode9.4
+- xcode10
 before_script:
 - gem install xcpretty
-- gem install jazzy
 script:
 - swift package generate-xcodeproj
 - set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES clean build test | xcpretty
-- jazzy
 after_success:
 - bash <(curl -s https://codecov.io/bash) -J 'SwiftRoaring'
