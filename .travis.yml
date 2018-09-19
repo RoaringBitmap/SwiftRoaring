@@ -1,6 +1,7 @@
 language: swift
 os: osx
 osx_image:
+- xcode8
 - xcode9
 - xcode9.4
 - xcode10
