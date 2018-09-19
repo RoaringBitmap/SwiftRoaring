@@ -67,6 +67,8 @@ class swiftRoaringTests: XCTestCase {
 
     func testInitCapacity(){
         //TODO
+        let rbmCapacity = RoaringBitmap(capacity: 8)
+        
     }
 
     func testInitArray(){
@@ -89,12 +91,45 @@ class swiftRoaringTests: XCTestCase {
         // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
         // XCTAssertEqual(cpy.maximum(), 800)
         let flip = cpy.flip(rangeStart: 0, rangeEnd:501)
-        XCTAssertEqual(flip.isEmpty(), true)
+        XCTAssertTrue(flip.isEmpty())
         cpy.flipInplace(rangeStart: 0, rangeEnd:501)
-        XCTAssertEqual(cpy.isEmpty(), true)
+        XCTAssertTrue(cpy.isEmpty())
         cpy = rbm.copy()
-        XCTAssertEqual(cpy.equals(rbm), true)
-        XCTAssertEqual(cpy == rbm, true)
+        XCTAssertTrue(cpy.equals(rbm))
+        XCTAssertTrue(cpy == rbm)
         XCTAssertEqual(cpy != rbm, false)
+        XCTAssertTrue(rbm.isSubset(cpy))
+        cpy.add(value: 800)
+        XCTAssertTrue(rbm.isStrictSubset(cpy))
+        cpy.remove(value: 800)
+        XCTAssertTrue(rbm.sizeInBytes() > 0)
+        XCTAssertTrue(rbm.shrinkToFit() >= 0)
+        XCTAssertTrue(rbm.runOptimize())
+        XCTAssertTrue(rbm.removeRunCompression())
+        var rbmap = RoaringBitmap()
+        rbmap.add(value: 1)
+        rbmap.describe()
+        rbmap.print()
+        var array = rbm.toArray()
+        for i in rbm {
+            if let index = array.index(of: i) {
+                array.remove(at: index)
+            }
+        }
+        XCTAssertTrue(array.count == 0)
+        XCTAssertTrue(rbm.count() == 501)
+        cpy.free()
+        XCTAssertTrue(cpy.count() == 0)
+        rbmap = RoaringBitmap()
+        rbmap.addRange(min: 0, max: 11)
+        XCTAssertTrue(rbmap.count() == 11)
+        rbmap.removeRange(min: 0, max: 11)
+        XCTAssertTrue(rbmap.count() == 0)
+        rbmap.addRange(min: 0, max: 11)
+        rbmap.removeRangeClosed(min: 0, max: 10)
+        XCTAssertTrue(rbmap.count() == 0)
+        XCTAssertTrue(rbmap.addCheck(value: 0))
+        rbmap.addMany(values: [1,2,3])
+        XCTAssertTrue(rbmap.count() == 4)
     }
 }
