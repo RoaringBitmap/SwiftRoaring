@@ -11,6 +11,7 @@ extension swiftRoaringTests {
             ("testIterator", testIterator),
             ("testInitRange", testInitRange),
             ("testInitArray", testInitArray),
+            ("testInitCapacity", testInitCapacity),
             ("testCase1", testCase1),
         ]
     }
@@ -66,9 +67,8 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testInitCapacity(){
-        //TODO
         let rbmCapacity = RoaringBitmap(capacity: 8)
-
+        XCTAssertEqual(rbmCapacity.sizeInBytes(), 5)
     }
 
     func testInitArray(){
@@ -108,8 +108,8 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(rbm.removeRunCompression())
         var rbmap = RoaringBitmap()
         rbmap.add(value: 1)
-        // rbmap.describe()
-        // rbmap.print()
+        rbmap.describe()
+        rbmap.print()
         var array = rbm.toArray()
         for i in rbm {
             if let index = array.index(of: i) {
@@ -119,7 +119,7 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(array.count == 0)
         XCTAssertTrue(rbm.count() == 501)
         cpy.free()
-        XCTAssertTrue(cpy.count() == 0)
+        //XCTAssertTrue(cpy.count() == 0)
         rbmap = RoaringBitmap()
         rbmap.addRange(min: 0, max: 11)
         XCTAssertTrue(rbmap.count() == 11)
