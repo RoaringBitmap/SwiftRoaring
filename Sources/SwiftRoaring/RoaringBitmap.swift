@@ -1,8 +1,13 @@
 import croaring
 
-//This class contains different values about a given RoaringBitmap
+/**
+* This class contains different values about a given RoaringBitmap
+*/
 public typealias RoaringStatistics = roaring_statistics_t
 
+/**
+* Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
+*/
 public class RoaringBitmap: Sequence {
     var ptr: UnsafeMutablePointer<roaring_bitmap_t>
     
