@@ -1,7 +1,6 @@
 language: swift
 os: osx
 osx_image:
-- xcode9
 - xcode9.4
 - xcode10
 xcode_project: SwiftRoaring

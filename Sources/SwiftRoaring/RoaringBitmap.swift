@@ -601,9 +601,10 @@ public class RoaringBitmap: Sequence {
     *   * sizeof(uint32_t))
     */
     public func toArray() -> [UInt32] {
-        let array: [UInt32] = []
-        let arrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: array)
-        croaring.roaring_bitmap_to_uint32_array(self.ptr, arrayPtr)
+        let count = (Int(self.count()) * MemoryLayout<UInt32>.size)/4
+        var array = [UInt32](repeating: 0, count: count)
+        //let arrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: array)
+        croaring.roaring_bitmap_to_uint32_array(self.ptr, &array)
         return array
     }
 
