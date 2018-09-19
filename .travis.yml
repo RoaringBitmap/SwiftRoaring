@@ -14,6 +14,7 @@ before_install:
 - brew outdated carthage || brew upgrade carthage
 before_script:
 - gem install xcpretty
+- gem install jazzy
 - carthage bootstrap
 script:
 - swift package generate-xcodeproj
