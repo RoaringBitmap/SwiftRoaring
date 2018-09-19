@@ -70,7 +70,7 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testInitArray(){
-        var array = [0,1,2,4,5,6]
+        let array = [0,1,2,4,5,6]
         let rbmArray = RoaringBitmap(values: array.map{ UInt32($0) })
         for i in array {
             XCTAssertEqual(rbmArray.contains(value: UInt32(i)), true)
@@ -80,11 +80,11 @@ class swiftRoaringTests: XCTestCase {
     func testCase1(){
         rbm.addRangeClosed(min:0, max:500)
         var cpy = rbm.copy()
-        cpy.containsRange(start:0, end:501)
+        _ = cpy.containsRange(start:0, end:501)
         XCTAssertEqual(cpy.maximum(), 500)
         XCTAssertEqual(cpy.minimum(), 0)
         XCTAssertEqual(cpy.rank(value: 499), 500)
-        var element = UInt32(800)
+        let element = UInt32(800)
         //TODO: FIX SELECT
         // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
         // XCTAssertEqual(cpy.maximum(), 800)

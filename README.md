@@ -3,6 +3,7 @@
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 [![Build Status](https://travis-ci.org/piotte13/SwiftRoaring.svg?branch=master)](https://travis-ci.org/piotte13/SwiftRoaring)
 [![codecov](https://codecov.io/gh/piotte13/SwiftRoaring/branch/master/graph/badge.svg)](https://codecov.io/gh/piotte13/SwiftRoaring)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 
 
 
