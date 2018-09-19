@@ -12,8 +12,15 @@ extension swiftRoaringTests {
             ("testInitRange", testInitRange),
             ("testInitArray", testInitArray),
             ("testInitCapacity", testInitCapacity),
-            ("testCase1", testCase1),
-            ("testOperators", testOperators),
+            ("testSelect", testSelect),
+            ("testAddingRemoving", testAddingRemoving),
+            ("testFree", testFree),
+            ("testToArray", testToArray),
+            ("testPrinting", testPrinting),
+            ("testOptimisations", testOptimisations),
+            ("testSubset", testSubset),
+            ("testEquals", testEquals),
+            ("testFlip", testFlip),
         ]
     }
 }
@@ -80,37 +87,46 @@ class swiftRoaringTests: XCTestCase {
         }
     }
 
-    func testCase1(){
+    func testFlip(){
         rbm.addRangeClosed(min:0, max:500)
-        var cpy = rbm.copy()
-        _ = cpy.containsRange(start:0, end:501)
-        XCTAssertEqual(cpy.maximum(), 500)
-        XCTAssertEqual(cpy.minimum(), 0)
-        XCTAssertEqual(cpy.rank(value: 499), 500)
-        let element = UInt32(800)
-        //TODO: FIX SELECT
-        // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
-        // XCTAssertEqual(cpy.maximum(), 800)
-        let flip = cpy.flip(rangeStart: 0, rangeEnd:501)
+        let flip = rbm.flip(rangeStart: 0, rangeEnd:501)
         XCTAssertTrue(flip.isEmpty())
-        cpy.flipInplace(rangeStart: 0, rangeEnd:501)
-        XCTAssertTrue(cpy.isEmpty())
-        cpy = rbm.copy()
+        rbm.flipInplace(rangeStart: 0, rangeEnd:501)
+        XCTAssertTrue(rbm.isEmpty())
+    }
+
+    func testEquals(){
+        let cpy = rbm.copy()
         XCTAssertTrue(cpy.equals(rbm))
         XCTAssertTrue(cpy == rbm)
         XCTAssertEqual(cpy != rbm, false)
+    }
+
+    func testSubset(){
+        let cpy = rbm.copy()
         XCTAssertTrue(rbm.isSubset(cpy))
         cpy.add(value: 800)
         XCTAssertTrue(rbm.isStrictSubset(cpy))
         cpy.remove(value: 800)
+    }
+
+    func testOptimisations(){
+        rbm.addRangeClosed(min:0, max:500)
         XCTAssertTrue(rbm.sizeInBytes() > 0)
         XCTAssertTrue(rbm.shrinkToFit() >= 0)
         XCTAssertTrue(rbm.runOptimize())
         XCTAssertTrue(rbm.removeRunCompression())
+    }
+
+    func testPrinting(){
         var rbmap = RoaringBitmap()
         rbmap.add(value: 1)
         rbmap.describe()
         rbmap.print()
+    }
+
+    func testToArray(){
+        rbm.add(value: 35)
         var array = rbm.toArray()
         for i in rbm {
             if let index = array.index(of: i) {
@@ -118,20 +134,40 @@ class swiftRoaringTests: XCTestCase {
             }
         }
         XCTAssertTrue(array.count == 0)
-        XCTAssertTrue(rbm.count() == 501)
-        //cpy.free()
-        //XCTAssertTrue(cpy.count() == 0)
-        // rbmap = RoaringBitmap()
-        // rbmap.addRange(min: 0, max: 11)
-        // XCTAssertTrue(rbmap.count() == 11)
-        // rbmap.removeRange(min: 0, max: 11)
-        // XCTAssertTrue(rbmap.count() == 0)
-        // rbmap.addRange(min: 0, max: 11)
-        // rbmap.removeRangeClosed(min: 0, max: 10)
-        // XCTAssertTrue(rbmap.count() == 0)
-        // XCTAssertTrue(rbmap.addCheck(value: 0))
-        // rbmap.addMany(values: [1,2,3])
-        // XCTAssertTrue(rbmap.count() == 4)
+        XCTAssertTrue(rbm.count() == 1)
+    }
+
+    func testFree(){
+        rbm.free()
+        XCTAssertTrue(rbm.count() == 0)
+    }
+
+    func testAddingRemoving(){
+        rbm.addRangeClosed(min:0, max:500)
+        var cpy = rbm.copy()
+        _ = cpy.containsRange(start:0, end:501)
+        XCTAssertEqual(cpy.maximum(), 500)
+        XCTAssertEqual(cpy.minimum(), 0)
+        XCTAssertEqual(cpy.rank(value: 499), 500)
+        var rbmap = RoaringBitmap()
+        rbmap.addRange(min: 0, max: 11)
+        XCTAssertTrue(rbmap.count() == 11)
+        rbmap.removeRange(min: 0, max: 11)
+        XCTAssertTrue(rbmap.count() == 0)
+        rbmap.addRange(min: 0, max: 11)
+        rbmap.removeRangeClosed(min: 0, max: 10)
+        XCTAssertTrue(rbmap.count() == 0)
+        XCTAssertTrue(rbmap.addCheck(value: 0))
+        rbmap.addMany(values: [1,2,3])
+        XCTAssertTrue(rbmap.count() == 4)
+    }
+
+    func testSelect(){
+        var cpy = rbm.copy()
+        //var element = UInt32(800)
+        //TODO: FIX SELECT
+        // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
+        // XCTAssertEqual(cpy.maximum(), 800)
     }
 
     func testOperators(){
