@@ -9,6 +9,8 @@ xcode_scheme: SwiftRoaring-Package
 env:
   global:
   - FRAMEWORK_NAME=SwiftRoaring
+  - GITHUB_REPO: piotte13/SwiftRoaring
+  - secure: q/TIN9YBp3Sp4Ld5Rm8InO2n433ouFRKw7KF5JEB2gzPXretLH2UPVMqrkIRkW5NwnsT8CgM3d6q5QPRpvIoAs+3cxaOy2CaCZ7ij0w5dtkIh3wQfqUbzXTZ7p8h18ikOvUE26mTHXlBKPSO1vZUGsXTEe9BgqdDW3ojqPJX/Yq/xOEo4+UyceuekvOYUhg7jN/CxjLbkBcnwFFr46/nQLUOeJIpewyHjw/vX1MASTZXQ6wnucDXy5QSD5vIasmB5zld+ryYNtfDyuaCB8desnQWCMQZ6Wjxy992tLrHDOvaepjwFkBDnaJL3hGUhm5Z5lG0p6Qccd2JCZcc4WRy/b7+WpAHwIfDAgfCbaG9gYQPwOYrKVmLXtTUc+IZZS1o/xY/Yu08P9FajncvLuV7dSMO8bfV7B/FuVH8eFbTyoTQKioqGbeHbFJSipG7eMvlbxY9OPevTsUySOBgRREwNckygN+PjqS/bqSAmstzdpAxkbs7UUydTor8prjKIdH+RKeTnDyF4Mcd7sNg4oUcxl2c2O6xH6Btzz7q0zFi2qxTjI5/VSd7ilQzSe9ulwOTHC90sRXPVcmkxWQa7NqSgpsoY8FkIQTubXYFNX2tDvPUi1a6Dz3HMw4bpLnXLdI1uPOjUbLqTZl+NwlKc1AiK4Lsn33NHSZ5WuIb0CfQ96g=
 before_install:
 - brew update
 - brew outdated carthage || brew upgrade carthage
@@ -20,7 +22,7 @@ script:
 - swift package generate-xcodeproj
 - set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES
   clean build test | xcpretty
-- bash ./scripts/deploy-to-gh-pages.sh
+- bash ./Scripts/deploy-to-gh-pages.sh
 before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
