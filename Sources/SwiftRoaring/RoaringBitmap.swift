@@ -1,5 +1,6 @@
 import croaring
 
+//This class contains different values about a given RoaringBitmap
 public typealias RoaringStatistics = roaring_statistics_t
 
 public class RoaringBitmap: Sequence {
@@ -54,7 +55,12 @@ public class RoaringBitmap: Sequence {
         x2.ptr = croaring.roaring_bitmap_and(self.ptr, x.ptr)
         return x2
     }
-
+    /**
+    * Computes the intersection between two bitmaps and returns new bitmap. The
+    * caller is
+    * responsible for memory management.
+    *
+    */
     public static func &&(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap{
         return left.and(right)
     }
@@ -135,6 +141,10 @@ public class RoaringBitmap: Sequence {
         return x2
 
     }
+    /**
+    * Computes the union between two bitmaps and returns new bitmap. The caller is
+    * responsible for memory management.
+    */
     public static func ||(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap{
         return left.or(right)
     }
@@ -198,6 +208,10 @@ public class RoaringBitmap: Sequence {
         return x2
 
     }
+    /**
+    * Computes the symmetric difference (xor) between two bitmaps
+    * and returns new bitmap. The caller is responsible for memory management.
+    */
     public static func ^(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap{
         return left.xor(right)
     }
@@ -387,7 +401,9 @@ public class RoaringBitmap: Sequence {
     public func containsRange(start: UInt64, end: UInt64) -> Bool {
         return croaring.roaring_bitmap_contains_range(self.ptr, start, end)
     }
-    
+    /**
+    * Check whether the bitmap is empty
+    */
     public func isEmpty() -> Bool {
         return croaring.roaring_bitmap_is_empty(self.ptr)
     }
@@ -579,9 +595,15 @@ public class RoaringBitmap: Sequence {
         return croaring.roaring_bitmap_equals(self.ptr, x.ptr)
 
     }
+    /**
+    * Return true if the two bitmaps contain the same elements.
+    */
     public static func ==(left: RoaringBitmap, right: RoaringBitmap) -> Bool{
         return left.equals(right)
     }
+    /**
+    * Return true if the two bitmaps DO NOT contain the same elements.
+    */
     public static func !=(left: RoaringBitmap, right: RoaringBitmap) -> Bool {
         return !(left == right)
     }
@@ -747,13 +769,16 @@ public class RoaringBitmap: Sequence {
         return stats
     }
 
-    /*********************
-    * What follows is code use to iterate through values in a roaring bitmap
+    /**
+    * Creates a RoaringBitmapIterator.
     */
     public func makeIterator() -> RoaringBitmapIterator {
         return RoaringBitmapIterator(ptr: self.ptr)
     }
 
+    /**
+    * code used to iterate through values in a roaring bitmap
+    */
     public struct RoaringBitmapIterator: IteratorProtocol {
         private var i: UnsafeMutablePointer<roaring_uint32_iterator_t>
         

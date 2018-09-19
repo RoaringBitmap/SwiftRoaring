@@ -28,19 +28,15 @@ Roaring bitmaps are found to work well in many important applications:
 > Use Roaring for bitmap compression whenever possible. Do not use other bitmap compression methods ([Wang et al., SIGMOD 2017](http://db.ucsd.edu/wp-content/uploads/2017/03/sidm338-wangA.pdf))
 
 
-
-### Testing
-
-Coming.
-
 ### Benchmarking
 
 Coming.
 
+### Dependencies
+
+Swift 4.0 or higher
 
 ### Usage
-
-Coming.
 
 Create a directory where you will create your application:
 
@@ -77,12 +73,58 @@ import SwiftRoaring;
 ....
 ```
 
-You can run your example as follows:
+### Example
+
+Here is a simplified but complete example:
+
+```swift
+import SwiftRoaring
+
+//Create a new Roaring Bitmap
+let bitmap = RoaringBitmap()
+
+//Example: Add Range
+bitmap.addRange(min: 0, max: 500)
+
+//Example: copy
+let cpy = bitmap.copy()
+
+//Example: Operators
+let and = bitmap && cpy
+
+//Example: Iterate
+for i in bitmap {
+    print(i)
+}
+
+//See documentation for more functionalities!
+
+```
+
+### Documentation
+
+https://piotte13.github.io/SwiftRoaring/
+
+### Development
+
+You can build using Swift Package Manager as follows:
 
 ```bash    
 swift build  -Xcc -march=native  --configuration release
 $(swift build   --configuration release  --show-bin-path)/fun
 ```
+You can run tests using Swift Package Manager as follows:
+```bash    
+swift test
+```
+
+### Mailing list/discussion group
+
+https://groups.google.com/forum/#!forum/roaring-bitmaps
+
+### Compatibility with Java RoaringBitmap library
+
+You can read bitmaps in Go, Java, C, C++ that have been serialized in Java, C, C++.
 
 ### References
 
@@ -92,40 +134,3 @@ Better bitmap performance with Roaring bitmaps,
 Software: Practice and Experience Volume 46, Issue 5, pages 709–719, May 2016
 http://arxiv.org/abs/1402.6407 This paper used data from http://lemire.me/data/realroaring2014.html
 - Daniel Lemire, Gregory Ssi-Yan-Kai, Owen Kaser, Consistently faster and smaller compressed bitmaps with Roaring, Software: Practice and Experience Volume 46, Issue 11, pages 1547-1569, November 2016 http://arxiv.org/abs/1603.06549
-
-
-
-### Dependencies
-
-Swift 4.1 or better
-
-
-### Example
-
-Here is a simplified but complete example:
-
-```swift
-import SwiftRoaring
-
-//Create a new Roaring Bitmap
-var bitmap = RoaringBitmap()
-
-//Example: Add Integer
-bitmap.add(x: 99999)
-
-//See documentation for more functionalities!
-
-
-```
-
-### Documentation
-
-Coming.
-
-### Mailing list/discussion group
-
-https://groups.google.com/forum/#!forum/roaring-bitmaps
-
-### Compatibility with Java RoaringBitmap library
-
-You can read bitmaps in Go, Java, C, C++ that have been serialized in Java, C, C++.
