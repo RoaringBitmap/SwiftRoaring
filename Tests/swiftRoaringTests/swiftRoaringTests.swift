@@ -267,8 +267,8 @@ class swiftRoaringTests: XCTestCase {
 
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>){
-        let randList1 = makeList(1000)
-        let randList2 = makeList(1000)
+        let randList1 = makeList(10)
+        let randList2 = makeList(10)
         let rbm1 = RoaringBitmap(values: randList1)
         let rbm2 = RoaringBitmap(values: randList2)
         let swiftSet1 = Set(randList1)
@@ -278,7 +278,7 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func makeList(_ n: Int) -> [UInt32] {
-        return (0..<n).map{ _ in UInt32(Int.random(in: 0 ..< 100000)) }
+        return (0..<n).map{ _ in UInt32(Int.random(in: 0 ..< 10)) }
 
     
 }
