@@ -13,6 +13,7 @@ extension swiftRoaringTests {
             ("testInitArray", testInitArray),
             ("testInitCapacity", testInitCapacity),
             ("testCase1", testCase1),
+            ("testOperators", testOperators),
         ]
     }
 }
@@ -118,18 +119,22 @@ class swiftRoaringTests: XCTestCase {
         }
         XCTAssertTrue(array.count == 0)
         XCTAssertTrue(rbm.count() == 501)
-        cpy.free()
+        //cpy.free()
         //XCTAssertTrue(cpy.count() == 0)
-        rbmap = RoaringBitmap()
-        rbmap.addRange(min: 0, max: 11)
-        XCTAssertTrue(rbmap.count() == 11)
-        rbmap.removeRange(min: 0, max: 11)
-        XCTAssertTrue(rbmap.count() == 0)
-        rbmap.addRange(min: 0, max: 11)
-        rbmap.removeRangeClosed(min: 0, max: 10)
-        XCTAssertTrue(rbmap.count() == 0)
-        XCTAssertTrue(rbmap.addCheck(value: 0))
-        rbmap.addMany(values: [1,2,3])
-        XCTAssertTrue(rbmap.count() == 4)
+        // rbmap = RoaringBitmap()
+        // rbmap.addRange(min: 0, max: 11)
+        // XCTAssertTrue(rbmap.count() == 11)
+        // rbmap.removeRange(min: 0, max: 11)
+        // XCTAssertTrue(rbmap.count() == 0)
+        // rbmap.addRange(min: 0, max: 11)
+        // rbmap.removeRangeClosed(min: 0, max: 10)
+        // XCTAssertTrue(rbmap.count() == 0)
+        // XCTAssertTrue(rbmap.addCheck(value: 0))
+        // rbmap.addMany(values: [1,2,3])
+        // XCTAssertTrue(rbmap.count() == 4)
+    }
+
+    func testOperators(){
+
     }
 }
