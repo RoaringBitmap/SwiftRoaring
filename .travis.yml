@@ -19,6 +19,7 @@ script:
 - swift package generate-xcodeproj
 - set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES
   clean build test | xcpretty
+- bash ./scripts/deploy-to-gh-pages.sh
 before_deploy:
 - carthage build --no-skip-current
 - carthage archive $FRAMEWORK_NAME
