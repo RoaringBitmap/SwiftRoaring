@@ -164,6 +164,8 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(rbmap.addCheck(value: 0))
         rbmap.addMany(values: [1,2,3])
         XCTAssertTrue(rbmap.count() == 4)
+        XCTAssertTrue(rbmap.removeCheck(value: 3))
+        XCTAssertTrue(rbmap.count() == 3)
     }
 
     func testSelect(){
@@ -212,6 +214,12 @@ class swiftRoaringTests: XCTestCase {
 
         orMany = rbm1.orManyHeap([rbm2,rbm3,rbm4])
         XCTAssertEqual(swiftOrMany, Set(orMany.toArray()))
+
+        var lazy = rbm3.lazyOr(rbm4, bitsetconversion: false)
+        XCTAssertEqual(swiftSet3.union(swiftSet4), Set(lazy.toArray()))
+        rbm3.lazyOrInplace(rbm4, bitsetconversion: false)
+        rbm3.repairAfterLazy()
+        XCTAssertEqual(swiftSet3.union(swiftSet4), Set(rbm3.toArray()))
     }
 
     func testXor(){
@@ -233,6 +241,12 @@ class swiftRoaringTests: XCTestCase {
         swiftOrMany = swiftOrMany.symmetricDifference(swiftSet3)
         swiftOrMany = swiftOrMany.symmetricDifference(swiftSet4)
         XCTAssertEqual(swiftOrMany, Set(orMany.toArray()))
+
+        var lazy = rbm3.lazyXor(rbm4)
+        XCTAssertEqual(swiftSet3.symmetricDifference(swiftSet4), Set(lazy.toArray()))
+        rbm3.lazyXorInplace(rbm4)
+        rbm3.repairAfterLazy()
+        XCTAssertEqual(swiftSet3.symmetricDifference(swiftSet4), Set(rbm3.toArray()))
     }
 
     func testAndNot(){
