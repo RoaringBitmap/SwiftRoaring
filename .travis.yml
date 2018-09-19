@@ -1,13 +1,35 @@
 language: swift
 os: osx
-osx_image: 
+osx_image:
 - xcode9
 - xcode9.4
 - xcode10
+xcode_project: SwiftRoaring
+xcode_scheme: SwiftRoaring-Package
+env:
+  global:
+  - FRAMEWORK_NAME=SwiftRoaring
+before_install:
+- brew update
+- brew outdated carthage || brew upgrade carthage
 before_script:
 - gem install xcpretty
+- carthage bootstrap
 script:
 - swift package generate-xcodeproj
-- set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES clean build test | xcpretty
+- set -o pipefail && xcodebuild -scheme SwiftRoaring-Package -enableCodeCoverage YES
+  clean build test | xcpretty
+before_deploy:
+- carthage build --no-skip-current
+- carthage archive $FRAMEWORK_NAME
 after_success:
 - bash <(curl -s https://codecov.io/bash) -J 'SwiftRoaring'
+deploy:
+  provider: releases
+  api_key:
+    secure: abDSRz9NV1PuEFrXF7yBAiSoRFsMS97Oc/b1dNGs/B3v2vlynjioYrIFZmdrwk34pFwbkR9qUTEl5oeUY/1M3tKmC/JDbJC9+7i128ITzwjfZpSmlPp7JA1JHcbvPFPEIASn6DULayTVe8f5HN1QbFGYFbPPHss6FXEKBDoc0/dftv7bGSdE3ZkE61vgwS/HeuVvAssfAE0OVpUHO/TVC3vk9R2uBoFflDZZFeAqcSn1PPltHqCVprjUXHWkYGrKIv6aJ5goArODSUdOKea7oaV67Hq8Aaq8Ul4IpemsinmAlQ7mdYDlnYxu1P4NTUzWKa/ZS5LccIp55Nd70uOVmNUJlAeic8ewk/PrW8+kf+GOVraSoA1QjarSDrcY4L1g/wQ1xD5Tr2I4K9VYIg8ewOOnAE10Ru8LuJJmRrddUJ19IkvxkPElJUq7fp1K+sABnyO7HOkMQnv3QmKFxK+8DSRy4J0jS1V4HMDap2u2IusJ5cPWNXasveXnpLa+7STOCtbXIK0cq2SmngnVOHlvImb7JvoTNPX/Qwy6WAYcwix01IyRIWl2SBMqwdoQuguux8MPC4FPifssrmXB0dNkGY5IW1umyjfSOUYJYbhGHMIEW0ZgHpLuXu+I/QHPBJUFVy6OuAIk4rceyVo3Gf/RKukC/ekxZ3cwOnzus5qlTCk=
+  file: "$FRAMEWORK_NAME.framework.zip"
+  skip_cleanup: true
+  on:
+    repo: piotte13/SwiftRoaring
+    tags: true
