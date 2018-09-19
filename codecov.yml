@@ -1,0 +1,3 @@
+ignore:
+  - "Tests"  # ignore Tests
+  - "Scripts"  # ignore Scripts
