@@ -301,8 +301,10 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func makeList(_ n: Int) -> [UInt32] {
-        return (0..<n).map{ _ in UInt32(Int.random(in: 0 ..< 1000)) }
-
-    
-}
+         #if os(Linux)
+            return (0..<n).map{ _ in UInt32(Int.random(in: 0 ..< 1000)) }
+        #else
+            return (0..<n).map{ _ in UInt32(arc4random_uniform(1000)+1) }
+        #endif
+    }
 }

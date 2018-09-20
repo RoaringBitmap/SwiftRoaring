@@ -546,7 +546,7 @@ public class RoaringBitmap: Sequence {
     /**
     * Frees the memory.
     */
-    public func free() {
+    private func free() {
         croaring.roaring_bitmap_free(self.ptr)
     }
 
