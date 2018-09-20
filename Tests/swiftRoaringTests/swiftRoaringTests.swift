@@ -26,7 +26,8 @@ extension swiftRoaringTests {
             ("testAndNot", testAndNot),
             ("testSerialize", testSerialize),
             ("testPortableSerialize", testPortableSerialize),
-            ("testStatistics", testStatistics),   
+            ("testStatistics", testStatistics),
+            ("testJaccardIndex", testJaccardIndex),   
         ]
     }
 }
@@ -287,6 +288,12 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(stats.max_value == 500)
         XCTAssertTrue(stats.min_value == 0)
         XCTAssertTrue(stats.cardinality == 501)
+    }
+
+    func testJaccardIndex(){
+        rbm.addMany(values: [1,2,3])
+        let rbm2 = RoaringBitmap(values: [3,4,5])
+        XCTAssertEqual(rbm.jaccardIndex(rbm2), 0.2)
     }
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>){
