@@ -680,7 +680,7 @@ public class RoaringBitmap: Sequence {
     * see roaring_bitmap_portable_deserialize if you want a format that's
     * compatible with Java and Go implementations
     */
-    public func deserialize(buffer: [Int8]) -> RoaringBitmap {
+    public static func deserialize(buffer: [Int8]) -> RoaringBitmap {
         let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
         let ptr = croaring.roaring_bitmap_deserialize(bufferPtr)!
@@ -706,7 +706,7 @@ public class RoaringBitmap: Sequence {
     * overflow. For a safer approach,
     * call roaring_bitmap_portable_deserialize_safe.
     */
-    public func portableDeserialize(buffer: [Int8]) -> RoaringBitmap {
+    public static func portableDeserialize(buffer: [Int8]) -> RoaringBitmap {
         let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
         let ptr = croaring.roaring_bitmap_portable_deserialize(bufferPtr)!
@@ -721,7 +721,7 @@ public class RoaringBitmap: Sequence {
     * https://github.com/RoaringBitmap/RoaringFormatSpec
     * In case of failure, a null pointer is returned.
     */
-    public func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
+    public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
         let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)        
         let ptr = croaring.roaring_bitmap_portable_deserialize_safe(bufferPtr, maxbytes)!
@@ -736,7 +736,7 @@ public class RoaringBitmap: Sequence {
     * the Java and Go versions. See format specification at
     * https://github.com/RoaringBitmap/RoaringFormatSpec
     */
-    public func portableDeserializeSize(buffer: [Int8], maxbytes: size_t) -> size_t {
+    public static func portableDeserializeSize(buffer: [Int8], maxbytes: size_t) -> size_t {
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
         return croaring.roaring_bitmap_portable_deserialize_size(bufferPtr, maxbytes)
     }
@@ -767,11 +767,12 @@ public class RoaringBitmap: Sequence {
 
     /**
     * If the size of the roaring bitmap is strictly greater than rank, then this
-    function returns true and set element to the element of given rank.
+    function returns true and set the value to the the given rank.
     Otherwise, it returns false.
     */
-    public func select(rank: UInt32, element: inout UInt32) -> Bool {
-        return croaring.roaring_bitmap_select(self.ptr, rank, &element)
+    public func select(rank: UInt32, value: UInt32) -> Bool {
+        var cpy = value
+        return croaring.roaring_bitmap_select(self.ptr, rank, &cpy)
 
     }
     

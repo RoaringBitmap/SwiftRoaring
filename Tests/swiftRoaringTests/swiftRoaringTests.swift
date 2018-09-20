@@ -24,7 +24,9 @@ extension swiftRoaringTests {
             ("testOr", testOr),
             ("testXor", testXor),
             ("testAndNot", testAndNot),
-            ("testSerialize", testSerialize),   
+            ("testSerialize", testSerialize),
+            ("testPortableSerialize", testPortableSerialize),
+            ("testStatistics", testStatistics),   
         ]
     }
 }
@@ -164,11 +166,9 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testSelect(){
-        //let cpy = rbm.copy()
-        //var element = UInt32(800)
-        //TODO: FIX SELECT
-        // XCTAssertEqual(cpy.select(rank:500, element: &element), true)
-        // XCTAssertEqual(cpy.maximum(), 800)
+        rbm.addRangeClosed(min:0, max:500)
+        XCTAssertTrue(rbm.select(rank:5, value: 800))
+        XCTAssertEqual(rbm.rank(value:800), 501)
     }
 
     func testAnd(){
@@ -259,7 +259,34 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testSerialize(){
+        rbm.addRangeClosed(min:0, max:500)
+        let size = rbm.sizeInBytes()
+        let buffer = [Int8](repeating: 0, count: size)
+        XCTAssertEqual(rbm.serialize(buffer: buffer), size)
+        let deserializedRbm = RoaringBitmap.deserialize(buffer: buffer)
+        XCTAssertTrue(deserializedRbm == rbm)
 
+    }
+
+    func testPortableSerialize(){
+        rbm.addRangeClosed(min:0, max:500)
+        let size = rbm.portableSizeInBytes()
+        let buffer = [Int8](repeating: 0, count: size)
+        XCTAssertEqual(rbm.portableSerialize(buffer: buffer), size)
+        let deserializedRbm = RoaringBitmap.portableDeserialize(buffer: buffer)
+        XCTAssertTrue(deserializedRbm == rbm)
+        let safeSize = RoaringBitmap.portableDeserializeSize(buffer: buffer, maxbytes: size)
+        let deserializedSafeRbm = RoaringBitmap.portableDeserializeSafe(buffer: buffer, maxbytes: safeSize)
+        XCTAssertTrue(deserializedSafeRbm == rbm)
+
+    }
+
+    func testStatistics(){
+        rbm.addRangeClosed(min:0, max:500)
+        let stats = rbm.statistics()
+        XCTAssertTrue(stats.max_value == 500)
+        XCTAssertTrue(stats.min_value == 0)
+        XCTAssertTrue(stats.cardinality == 501)
     }
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>){
