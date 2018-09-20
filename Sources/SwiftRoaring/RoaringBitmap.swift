@@ -44,6 +44,11 @@ public class RoaringBitmap: Sequence {
         let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: values)
         self.ptr = croaring.roaring_bitmap_of_ptr(values.count, ptr)!
     }
+    
+    deinit {
+        self.free()
+    }
+    
 
     /////////////////////////////////////////////////////////////////////////////
     ///                             OPERATORS                                 ///
