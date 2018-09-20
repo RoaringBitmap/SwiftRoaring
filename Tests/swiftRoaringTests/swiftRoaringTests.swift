@@ -14,7 +14,6 @@ extension swiftRoaringTests {
             ("testInitCapacity", testInitCapacity),
             ("testSelect", testSelect),
             ("testAddingRemoving", testAddingRemoving),
-            ("testFree", testFree),
             ("testToArray", testToArray),
             ("testPrinting", testPrinting),
             ("testOptimisations", testOptimisations),
@@ -25,6 +24,7 @@ extension swiftRoaringTests {
             ("testOr", testOr),
             ("testXor", testXor),
             ("testAndNot", testAndNot),
+            ("testSerialize", testSerialize),   
         ]
     }
 }
@@ -139,11 +139,6 @@ class swiftRoaringTests: XCTestCase {
         }
         XCTAssertTrue(array.count == 0)
         XCTAssertTrue(rbm.count() == 1)
-    }
-
-    func testFree(){
-        // rbm.free()
-        // XCTAssertTrue(rbm.count() == 0)
     }
 
     func testAddingRemoving(){
@@ -263,8 +258,9 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertEqual(Int(andNotCardinality), andSwift.count)
     }
 
+    func testSerialize(){
 
-
+    }
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>){
         let randList1 = makeList(100)

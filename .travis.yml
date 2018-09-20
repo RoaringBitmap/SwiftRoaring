@@ -34,4 +34,3 @@ deploy:
   skip_cleanup: true
   on:
     repo: piotte13/SwiftRoaring
-    tags: true
