@@ -196,10 +196,10 @@ public class RoaringBitmap: Sequence {
     */
     public func orMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
         var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
+        ptrArray.append(self.ptr)
         for x in xs {
             ptrArray.append(x.ptr)
         }
-        ptrArray.append(self.ptr)
         let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
         return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(ptrArray.count, ptrArrayPtr))
 
@@ -214,10 +214,10 @@ public class RoaringBitmap: Sequence {
     */
     public func orManyHeap(_ xs: [RoaringBitmap]) -> RoaringBitmap {
         var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
+        ptrArray.append(self.ptr)
         for x in xs {
             ptrArray.append(x.ptr)
         }
-        ptrArray.append(self.ptr)
         let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
         return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(ptrArray.count), ptrArrayPtr))
 
