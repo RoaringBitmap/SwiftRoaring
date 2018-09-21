@@ -22,6 +22,13 @@ public class RoaringBitmap: Sequence {
     }
 
     /**
+    * Creates a new bitmap using a given ptr
+    */
+    public init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
+        self.ptr = ptr
+    }
+
+    /**
     * Add all the values between min (included) and max (excluded) that are at a
     * distance k*step from min.
     */
@@ -61,8 +68,7 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func and(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_and(self.ptr, x.ptr)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
         return x2
     }
     /**
@@ -152,8 +158,7 @@ public class RoaringBitmap: Sequence {
     * responsible for memory management.
     */
     public func or(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_or(self.ptr, x.ptr)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
         return x2
 
     }
@@ -190,15 +195,13 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func orMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
         var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
         for x in xs {
             ptrArray.append(x.ptr)
         }
         ptrArray.append(self.ptr)
         let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        x2.ptr = croaring.roaring_bitmap_or_many(ptrArray.count, ptrArrayPtr)
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(ptrArray.count, ptrArrayPtr))
 
     }
 
@@ -210,15 +213,13 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func orManyHeap(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
         var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
         for x in xs {
             ptrArray.append(x.ptr)
         }
         ptrArray.append(self.ptr)
         let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        x2.ptr = croaring.roaring_bitmap_or_many_heap(UInt32(ptrArray.count), ptrArrayPtr)
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(ptrArray.count), ptrArrayPtr))
 
     }
 
@@ -227,8 +228,7 @@ public class RoaringBitmap: Sequence {
     * and returns new bitmap. The caller is responsible for memory management.
     */
     public func xor(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_xor(self.ptr, x.ptr)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
         return x2
 
     }
@@ -263,15 +263,13 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func xorMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
         var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
         for x in xs {
             ptrArray.append(x.ptr)
         }
         ptrArray.append(self.ptr)
         let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        x2.ptr = croaring.roaring_bitmap_xor_many(ptrArray.count, ptrArrayPtr)
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor_many(ptrArray.count, ptrArrayPtr))
 
     }
 
@@ -281,8 +279,7 @@ public class RoaringBitmap: Sequence {
     * and returns new bitmap. The caller is responsible for memory management.
     */
     public func andNot(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_andnot(self.ptr, x.ptr)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
         return x2
 
     }
@@ -362,8 +359,7 @@ public class RoaringBitmap: Sequence {
     * whether container-container operations force a bitset conversion.
     **/
     public func lazyOr(_ x: RoaringBitmap, bitsetconversion: Bool) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
         return x2
 
     }
@@ -403,8 +399,7 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func lazyXor(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
         return x2
 
     }
@@ -426,8 +421,7 @@ public class RoaringBitmap: Sequence {
     * Areas outside the range are passed through unchanged.
     */
     public func flip(rangeStart: UInt64, rangeEnd: UInt64) -> RoaringBitmap {
-        let x2 = RoaringBitmap()
-        x2.ptr = croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd)
+        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
         return x2
 
     }
@@ -453,8 +447,7 @@ public class RoaringBitmap: Sequence {
     *
     */
     public func copy() -> RoaringBitmap {
-        let cpy = RoaringBitmap()
-        cpy.ptr = croaring.roaring_bitmap_copy(self.ptr)
+        let cpy = RoaringBitmap(ptr: croaring.roaring_bitmap_copy(self.ptr))
         return cpy
     }
 
@@ -681,11 +674,8 @@ public class RoaringBitmap: Sequence {
     * compatible with Java and Go implementations
     */
     public static func deserialize(buffer: [Int8]) -> RoaringBitmap {
-        let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        let ptr = croaring.roaring_bitmap_deserialize(bufferPtr)!
-        rBitmap.ptr = ptr
-        return rBitmap
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_deserialize(bufferPtr)!)
     }
 
     /**
@@ -707,11 +697,8 @@ public class RoaringBitmap: Sequence {
     * call roaring_bitmap_portable_deserialize_safe.
     */
     public static func portableDeserialize(buffer: [Int8]) -> RoaringBitmap {
-        let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        let ptr = croaring.roaring_bitmap_portable_deserialize(bufferPtr)!
-        rBitmap.ptr = ptr
-        return rBitmap
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize(bufferPtr)!)
     }
 
     /**
@@ -722,11 +709,8 @@ public class RoaringBitmap: Sequence {
     * In case of failure, a null pointer is returned.
     */
     public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
-        let rBitmap = RoaringBitmap()
         let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)        
-        let ptr = croaring.roaring_bitmap_portable_deserialize_safe(bufferPtr, maxbytes)!
-        rBitmap.ptr = ptr
-        return rBitmap
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize_safe(bufferPtr, maxbytes)!)
     }
 
     /**
