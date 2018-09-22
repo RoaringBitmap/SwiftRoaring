@@ -8,9 +8,11 @@ public typealias RoaringStatistics = roaring_statistics_t
 /**
 * Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
 */
-public class RoaringBitmap: Sequence {
+public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
+                           Hashable, ExpressibleByArrayLiteral  {
     var ptr: UnsafeMutablePointer<roaring_bitmap_t>
-    
+    public typealias Element = UInt32
+
     /////////////////////////////////////////////////////////////////////////////
     ///                             CONSTRUCTORS                              ///
     /////////////////////////////////////////////////////////////////////////////
@@ -51,11 +53,17 @@ public class RoaringBitmap: Sequence {
         let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: values)
         self.ptr = croaring.roaring_bitmap_of_ptr(values.count, ptr)!
     }
-    
+
+    public required init(arrayLiteral: Element...) {
+        self.ptr = croaring.roaring_bitmap_create()!
+        for i in arrayLiteral { add(i) }
+
+    }
+
     deinit {
         self.free()
     }
-    
+
 
     /////////////////////////////////////////////////////////////////////////////
     ///                             OPERATORS                                 ///
@@ -468,7 +476,7 @@ public class RoaringBitmap: Sequence {
     * Add value x
     *
     */
-    public func add(value:UInt32) {
+    public func add(_ value:UInt32) {
         croaring.roaring_bitmap_add(self.ptr, value)
     }
 
@@ -486,7 +494,7 @@ public class RoaringBitmap: Sequence {
     * Add value x
     * Returns true if a new value was added, false if the value was already existing.
     */
-    public func addCheck(value:UInt32) -> Bool {
+    public func addCheck(_ value:UInt32) -> Bool {
         return croaring.roaring_bitmap_add_checked(self.ptr, value)
     }
 
@@ -508,7 +516,7 @@ public class RoaringBitmap: Sequence {
     * Remove value x
     *
     */
-    public func remove(value:UInt32) {
+    public func remove(_ value:UInt32) {
         croaring.roaring_bitmap_remove(self.ptr, value)
     }
 
@@ -532,7 +540,7 @@ public class RoaringBitmap: Sequence {
     * Remove value x
     * Returns true if a new value was removed, false if the value was not existing.
     */
-    public func removeCheck(value:UInt32) -> Bool {
+    public func removeCheck(_ value:UInt32) -> Bool {
         return croaring.roaring_bitmap_remove_checked(self.ptr, value)
     }
 
@@ -560,7 +568,7 @@ public class RoaringBitmap: Sequence {
     /**
     * Check if value x is present
     */
-    public func contains(value: UInt32) -> Bool {
+    public func contains(_ value: UInt32) -> Bool {
         return croaring.roaring_bitmap_contains(self.ptr, value)
     }
 
@@ -576,7 +584,7 @@ public class RoaringBitmap: Sequence {
     public func isEmpty() -> Bool {
         return croaring.roaring_bitmap_is_empty(self.ptr)
     }
-       
+
     /**
     * Print the content of the bitmap.
     */
@@ -626,11 +634,11 @@ public class RoaringBitmap: Sequence {
     *  Remove run-length encoding even when it is more space efficient
     *  return whether a change was applied
     */
-    
+
     public func removeRunCompression() -> Bool {
         return croaring.roaring_bitmap_remove_run_compression(self.ptr)
     }
-    
+
 
     /** convert array and bitmap containers to run containers when it is more
     * efficient;
@@ -709,7 +717,7 @@ public class RoaringBitmap: Sequence {
     * In case of failure, a null pointer is returned.
     */
     public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)        
+        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
         return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize_safe(bufferPtr, maxbytes)!)
     }
 
@@ -759,7 +767,7 @@ public class RoaringBitmap: Sequence {
         return croaring.roaring_bitmap_select(self.ptr, rank, &cpy)
 
     }
-    
+
     /**
     * roaring_bitmap_rank returns the number of integers that are smaller or equal
     * to x.
@@ -792,7 +800,7 @@ public class RoaringBitmap: Sequence {
     * Collect statistics about the bitmap, see RoaringStatistics.swift for
     * a description of RoaringStatistics
     */
-    
+
     public func statistics() -> RoaringStatistics {
         var stats = RoaringStatistics()
         croaring.roaring_bitmap_statistics(self.ptr, &stats)
@@ -811,20 +819,39 @@ public class RoaringBitmap: Sequence {
     */
     public struct RoaringBitmapIterator: IteratorProtocol {
         private var i: UnsafeMutablePointer<roaring_uint32_iterator_t>
-        
+
         init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
             self.i = croaring.roaring_create_iterator(ptr)
         }
-        
+
         mutating public func next() -> UInt32? {
             if(i.pointee.has_value){
-                let val = i.pointee.current_value 
+                let val = i.pointee.current_value
                 croaring.roaring_advance_uint32_iterator(self.i)
                 return val
             }
             return nil
         }
-        
+
     }
 
+    /* returns a string representation of the bitset */
+    public var description: String {
+      var ret = prefix(100).map { $0.description }.joined(separator: ", ")
+      if count() >= 100 {
+        ret.append(", ...")
+      }
+      return "{\(ret)}"
+    }
+
+    /* hash value for the bitset, this is expensive and should be buffered
+    for performance */
+    public var hashValue: Int {
+      let b: UInt32 = 31
+      var hash: UInt32 = 0
+      for i in self {
+        hash = hash &* b &+ i
+      }
+      return Int(truncatingIfNeeded:hash)
+    }
 }

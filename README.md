@@ -118,6 +118,16 @@ You can run tests using Swift Package Manager as follows:
 swift test
 ```
 
+### Interactive use
+
+```
+$ swift build  -Xcc -march=native  --configuration release
+$ swift -I .build/release -L .build/release -lSwiftRoaringDynamic
+  1> import SwiftRoaring
+  2> let bitmap = RoaringBitmap()
+  3> bitmap.add(1)
+```
+
 ### Mailing list/discussion group
 
 https://groups.google.com/forum/#!forum/roaring-bitmaps
