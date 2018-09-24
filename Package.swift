@@ -5,7 +5,8 @@ let package = Package(
     name: "SwiftRoaring",
     products: [
         .library(name: "croaring", targets: ["croaring"]),
-        .library(name: "SwiftRoaring", targets: ["SwiftRoaring"])
+        .library(name: "SwiftRoaring", targets: ["SwiftRoaring"]),
+        .library(name: "SwiftRoaringDynamic", type: .dynamic, targets: ["SwiftRoaring"])
     ],
     targets: [
         .target(
