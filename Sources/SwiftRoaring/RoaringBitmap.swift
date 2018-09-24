@@ -26,7 +26,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /**
     * Creates a new bitmap using a given ptr
     */
-    public init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
+    private init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
         self.ptr = ptr
     }
 
@@ -561,7 +561,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /**
     * Get the cardinality of the bitmap (number of elements).
     */
-    public func count() -> UInt64 {
+    public var count: UInt64 {
         return croaring.roaring_bitmap_get_cardinality(self.ptr)
     }
 
@@ -581,7 +581,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /**
     * Check whether the bitmap is empty
     */
-    public func isEmpty() -> Bool {
+    public var isEmpty: Bool {
         return croaring.roaring_bitmap_is_empty(self.ptr)
     }
 
@@ -607,7 +607,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     *   * sizeof(uint32_t))
     */
     public func toArray() -> [UInt32] {
-        let count = (Int(self.count()) * MemoryLayout<UInt32>.size)/4
+        let count = (Int(self.count) * MemoryLayout<UInt32>.size)/4
         var array = [UInt32](repeating: 0, count: count)
         //let arrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: array)
         croaring.roaring_bitmap_to_uint32_array(self.ptr, &array)
@@ -838,7 +838,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /* returns a string representation of the bitset */
     public var description: String {
       var ret = prefix(100).map { $0.description }.joined(separator: ", ")
-      if count() >= 100 {
+      if self.count >= 100 {
         ret.append(", ...")
       }
       return "{\(ret)}"

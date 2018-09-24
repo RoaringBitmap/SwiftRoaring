@@ -27,7 +27,9 @@ extension swiftRoaringTests {
             ("testSerialize", testSerialize),
             ("testPortableSerialize", testPortableSerialize),
             ("testStatistics", testStatistics),
-            ("testJaccardIndex", testJaccardIndex),   
+            ("testJaccardIndex", testJaccardIndex),
+            ("testDescription", testDescription), 
+            ("testHashValue", testHashValue),    
         ]
     }
 }
@@ -41,33 +43,33 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testAdd() {
-        rbm.add(value: 35)
-        XCTAssertEqual(rbm.contains(value: 35), true)
+        rbm.add(35)
+        XCTAssertEqual(rbm.contains(35), true)
     }
 
     func testRemove() {
-        rbm.add(value: 35)
-        rbm.remove(value: 35)
-        XCTAssertEqual(rbm.contains(value: 35), false)
+        rbm.add(35)
+        rbm.remove(35)
+        XCTAssertEqual(rbm.contains(35), false)
     }
 
     func testClear() {
         for k in stride(from: 0, to: 10000, by: 100 ) {
-            rbm.add(value: UInt32(k))
+            rbm.add(UInt32(k))
         }
-        XCTAssertEqual(rbm.isEmpty(), false)
+        XCTAssertEqual(rbm.isEmpty, false)
         rbm.clear()
-        XCTAssertEqual(rbm.isEmpty(), true)
+        XCTAssertEqual(rbm.isEmpty, true)
     }
 
     func testIterator() {
         var count = 0
         for k in stride(from: 0, to: 10000, by: 100 ) {
-            rbm.add(value: UInt32(k))
+            rbm.add(UInt32(k))
             count += 1
         }
         for i in rbm {
-            XCTAssertEqual(rbm.contains(value: i), true)
+            XCTAssertEqual(rbm.contains(i), true)
             count -= 1
             if(count < 0) {break}
         }
@@ -77,7 +79,7 @@ class swiftRoaringTests: XCTestCase {
     func testInitRange(){
         let rbmRange = RoaringBitmap(min: 0,max: 1000,step: 50)
         for k in stride(from: 0, to: 1000, by: 50 ) {
-            XCTAssertEqual(rbmRange.contains(value: UInt32(k)), true)
+            XCTAssertEqual(rbmRange.contains(UInt32(k)), true)
         }
     }
 
@@ -90,16 +92,16 @@ class swiftRoaringTests: XCTestCase {
         let array = [0,1,2,4,5,6]
         let rbmArray = RoaringBitmap(values: array.map{ UInt32($0) })
         for i in array {
-            XCTAssertEqual(rbmArray.contains(value: UInt32(i)), true)
+            XCTAssertEqual(rbmArray.contains(UInt32(i)), true)
         }
     }
 
     func testFlip(){
         rbm.addRangeClosed(min:0, max:500)
         let flip = rbm.flip(rangeStart: 0, rangeEnd:501)
-        XCTAssertTrue(flip.isEmpty())
+        XCTAssertTrue(flip.isEmpty)
         rbm.flipInplace(rangeStart: 0, rangeEnd:501)
-        XCTAssertTrue(rbm.isEmpty())
+        XCTAssertTrue(rbm.isEmpty)
     }
 
     func testEquals(){
@@ -112,9 +114,9 @@ class swiftRoaringTests: XCTestCase {
     func testSubset(){
         let cpy = rbm.copy()
         XCTAssertTrue(rbm.isSubset(cpy))
-        cpy.add(value: 800)
+        cpy.add(800)
         XCTAssertTrue(rbm.isStrictSubset(cpy))
-        cpy.remove(value: 800)
+        cpy.remove(800)
     }
 
     func testOptimisations(){
@@ -127,13 +129,13 @@ class swiftRoaringTests: XCTestCase {
 
     func testPrinting(){
         let rbmap = RoaringBitmap()
-        rbmap.add(value: 1)
+        rbmap.add(1)
         rbmap.describe()
         rbmap.print()
     }
 
     func testToArray(){
-        rbm.add(value: 35)
+        rbm.add(35)
         var array = rbm.toArray()
         for i in rbm {
             if let index = array.index(of: i) {
@@ -141,7 +143,7 @@ class swiftRoaringTests: XCTestCase {
             }
         }
         XCTAssertTrue(array.count == 0)
-        XCTAssertTrue(rbm.count() == 1)
+        XCTAssertTrue(rbm.count == 1)
     }
 
     func testAddingRemoving(){
@@ -153,17 +155,17 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertEqual(cpy.rank(value: 499), 500)
         let rbmap = RoaringBitmap()
         rbmap.addRange(min: 0, max: 11)
-        XCTAssertTrue(rbmap.count() == 11)
+        XCTAssertTrue(rbmap.count == 11)
         rbmap.removeRange(min: 0, max: 11)
-        XCTAssertTrue(rbmap.count() == 0)
+        XCTAssertTrue(rbmap.count == 0)
         rbmap.addRange(min: 0, max: 11)
         rbmap.removeRangeClosed(min: 0, max: 10)
-        XCTAssertTrue(rbmap.count() == 0)
-        XCTAssertTrue(rbmap.addCheck(value: 0))
+        XCTAssertTrue(rbmap.count == 0)
+        XCTAssertTrue(rbmap.addCheck(0))
         rbmap.addMany(values: [1,2,3])
-        XCTAssertTrue(rbmap.count() == 4)
-        XCTAssertTrue(rbmap.removeCheck(value: 3))
-        XCTAssertTrue(rbmap.count() == 3)
+        XCTAssertTrue(rbmap.count == 4)
+        XCTAssertTrue(rbmap.removeCheck(3))
+        XCTAssertTrue(rbmap.count == 3)
     }
 
     func testSelect(){
@@ -295,6 +297,16 @@ class swiftRoaringTests: XCTestCase {
         let rbm2 = RoaringBitmap(values: [3,4,5])
         XCTAssertEqual(rbm.jaccardIndex(rbm2), 0.2)
     }
+
+    func testDescription(){
+        rbm.addRangeClosed(min:0, max:500)
+        print(rbm.description)
+    }
+
+    func testHashValue(){
+        print(rbm.hashValue)
+    }
+
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>){
         let randList1 = makeList(100)
