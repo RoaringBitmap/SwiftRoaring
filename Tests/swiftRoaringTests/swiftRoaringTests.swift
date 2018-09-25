@@ -94,6 +94,10 @@ class swiftRoaringTests: XCTestCase {
         for i in array {
             XCTAssertEqual(rbmArray.contains(UInt32(i)), true)
         }
+        let l: RoaringBitmap = [0,1,2,4,5,6]
+        for i in array {
+            XCTAssertEqual(l.contains(UInt32(i)), true)
+        }
     }
 
     func testFlip(){
@@ -113,16 +117,16 @@ class swiftRoaringTests: XCTestCase {
 
     func testSubset(){
         let cpy = rbm.copy()
-        XCTAssertTrue(rbm.isSubset(cpy))
+        XCTAssertTrue(rbm.isSubset(of: cpy))
         cpy.add(800)
-        XCTAssertTrue(rbm.isStrictSubset(cpy))
+        XCTAssertTrue(rbm.isStrictSubset(of: cpy))
         cpy.remove(800)
     }
 
     func testOptimisations(){
         rbm.addRangeClosed(min:0, max:500)
         XCTAssertTrue(rbm.sizeInBytes() > 0)
-        XCTAssertTrue(rbm.shrinkToFit() >= 0)
+        XCTAssertTrue(rbm.shrink() >= 0)
         XCTAssertTrue(rbm.runOptimize())
         XCTAssertTrue(rbm.removeRunCompression())
     }
@@ -150,8 +154,8 @@ class swiftRoaringTests: XCTestCase {
         rbm.addRangeClosed(min:0, max:500)
         let cpy = rbm.copy()
         _ = cpy.containsRange(start:0, end:501)
-        XCTAssertEqual(cpy.maximum(), 500)
-        XCTAssertEqual(cpy.minimum(), 0)
+        XCTAssertEqual(cpy.max(), 500)
+        XCTAssertEqual(cpy.min(), 0)
         XCTAssertEqual(cpy.rank(value: 499), 500)
         let rbmap = RoaringBitmap()
         rbmap.addRange(min: 0, max: 11)
@@ -184,7 +188,7 @@ class swiftRoaringTests: XCTestCase {
         rbm1 &= rbm2
         XCTAssertEqual(andSwift, Set(rbm1.toArray()))
 
-        let andCardinality = rbm1.andCardinality(rbm2)
+        let andCardinality = rbm1.intersectionCount(rbm2)
         XCTAssertEqual(Int(andCardinality), andSwift.count)
 
         XCTAssertEqual(rbm1.intersect(rbm2), andSwift.count > 0)   
@@ -197,22 +201,22 @@ class swiftRoaringTests: XCTestCase {
         let andSwift = swiftSet1.union(swiftSet2)
         XCTAssertEqual(andSwift, Set(andRbm.toArray()))
 
-        let orCardinality = rbm1.orCardinality(rbm2)
+        let orCardinality = rbm1.unionCount(rbm2)
         XCTAssertEqual(Int(orCardinality), andSwift.count)
 
         let (rbm3, rbm4, swiftSet3, swiftSet4) = makeSets()
-        var orMany = rbm1.orMany([rbm2,rbm3,rbm4])
+        var orMany = rbm1.unionMany([rbm2,rbm3,rbm4])
         var swiftOrMany = swiftSet1.union(swiftSet2)
         swiftOrMany = swiftOrMany.union(swiftSet3)
         swiftOrMany = swiftOrMany.union(swiftSet4)
         XCTAssertEqual(swiftOrMany, Set(orMany.toArray()))
 
-        orMany = rbm1.orManyHeap([rbm2,rbm3,rbm4])
+        orMany = rbm1.unionManyHeap([rbm2,rbm3,rbm4])
         XCTAssertEqual(swiftOrMany, Set(orMany.toArray()))
 
-        let lazy = rbm3.lazyOr(rbm4, bitsetconversion: false)
+        let lazy = rbm3.lazyUnion(rbm4, bitsetconversion: false)
         XCTAssertEqual(swiftSet3.union(swiftSet4), Set(lazy.toArray()))
-        rbm3.lazyOrInplace(rbm4, bitsetconversion: false)
+        rbm3.formLazyUnion(rbm4, bitsetconversion: false)
         rbm3.repairAfterLazy()
         XCTAssertEqual(swiftSet3.union(swiftSet4), Set(rbm3.toArray()))
 
@@ -227,19 +231,19 @@ class swiftRoaringTests: XCTestCase {
         let andSwift = swiftSet1.symmetricDifference(swiftSet2)
         XCTAssertEqual(andSwift, Set(andRbm.toArray()))
 
-        let xorCardinality = rbm1.xorCardinality(rbm2)
+        let xorCardinality = rbm1.symmetricDifferenceCount(rbm2)
         XCTAssertEqual(Int(xorCardinality), andSwift.count)
 
         let (rbm3, rbm4, swiftSet3, swiftSet4) = makeSets()
-        let orMany = rbm1.xorMany([rbm2,rbm3,rbm4])
+        let orMany = rbm1.symmetricDifferenceMany([rbm2,rbm3,rbm4])
         var swiftOrMany = swiftSet1.symmetricDifference(swiftSet2)
         swiftOrMany = swiftOrMany.symmetricDifference(swiftSet3)
         swiftOrMany = swiftOrMany.symmetricDifference(swiftSet4)
         XCTAssertEqual(swiftOrMany, Set(orMany.toArray()))
 
-        let lazy = rbm3.lazyXor(rbm4)
+        let lazy = rbm3.lazySymmetricDifference(rbm4)
         XCTAssertEqual(swiftSet3.symmetricDifference(swiftSet4), Set(lazy.toArray()))
-        rbm3.lazyXorInplace(rbm4)
+        rbm3.formLazySymmetricDifference(rbm4)
         rbm3.repairAfterLazy()
         XCTAssertEqual(swiftSet3.symmetricDifference(swiftSet4), Set(rbm3.toArray()))
 
@@ -257,7 +261,7 @@ class swiftRoaringTests: XCTestCase {
         rbm1 -= rbm2
         XCTAssertEqual(andSwift, Set(rbm1.toArray()))
 
-        let andNotCardinality = rbm1.andNotCardinality(rbm2)
+        let andNotCardinality = rbm1.subtractingCount(rbm2)
         XCTAssertEqual(Int(andNotCardinality), andSwift.count)
     }
 
