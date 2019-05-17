@@ -2,8 +2,7 @@
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift4-compatible-green.svg?style=flat" alt="Swift 4 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
-[![Build Status](https://travis-ci.org/piotte13/SwiftRoaring.svg?branch=master)](https://travis-ci.org/piotte13/SwiftRoaring)
-[![codecov](https://codecov.io/gh/piotte13/SwiftRoaring/branch/master/graph/badge.svg)](https://codecov.io/gh/piotte13/SwiftRoaring)
+[![Build Status](https://travis-ci.org/RoaringBitmap/SwiftRoaring.svg?branch=master)](https://travis-ci.org/RoaringBitmap/SwiftRoaring)        
 
 
 
@@ -51,7 +50,7 @@ import PackageDescription
 let package = Package(
     name: "foo",
     dependencies: [
-   .package(url: "https://github.com/piotte13/SwiftRoaring",  from: "0.0.1")
+   .package(url: "https://github.com/RoaringBitmap/SwiftRoaring",  from: "0.0.1")
     ],
     targets: [
         .target(
