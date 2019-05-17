@@ -516,7 +516,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /**
     * Add all values in range [min, max)
     */
-    public func addRange(min: UInt32, max: UInt32) {
+    public func addRange(min: UInt64, max: UInt64) {
         croaring.roaring_bitmap_add_range(self.ptr, min, max)
     }
 
@@ -861,5 +861,11 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         hash = hash &* b &+ i
       }
       return Int(truncatingIfNeeded:hash)
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+      for i in self {
+        i.hash(into: &hasher)
+      }
     }
 }
