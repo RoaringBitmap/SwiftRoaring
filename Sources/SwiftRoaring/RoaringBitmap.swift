@@ -153,6 +153,13 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     /**
+    * Returns the number of elements in range [min, max).
+    */
+    public func rangeCardinality(min: UInt64, max: UInt64) -> UInt64  {
+        return croaring.roaring_bitmap_range_cardinality(self.ptr, min, max)
+    }
+
+    /**
     * Computes the size of the symmetric difference (andnot) between two bitmaps.
     *
     */
@@ -505,16 +512,17 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         croaring.roaring_bitmap_add_range_closed(self.ptr, min, max)
     }
 
+
     /**
     * Add all values in range [min, max)
     */
-    public func addRange(min: UInt64, max: UInt64) {
+    public func addRange(min: UInt32, max: UInt32) {
         croaring.roaring_bitmap_add_range(self.ptr, min, max)
     }
 
+
     /**
     * Remove value x
-    *
     */
     public func remove(_ value:UInt32) {
         croaring.roaring_bitmap_remove(self.ptr, value)
