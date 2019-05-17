@@ -28,15 +28,11 @@ Roaring bitmaps are found to work well in many important applications:
 > Use Roaring for bitmap compression whenever possible. Do not use other bitmap compression methods ([Wang et al., SIGMOD 2017](http://db.ucsd.edu/wp-content/uploads/2017/03/sidm338-wangA.pdf))
 
 
-### Benchmarking
-
-Coming.
-
 ### Dependencies
 
 Swift 4.0 or higher
 
-### Usage
+### Usage using Swift Package Manager
 
 Create a directory where you will create your application:
 
