@@ -24,18 +24,10 @@ Roaring bitmaps are found to work well in many important applications:
 
 
 
-### Testing
-
-Coming.
-
-### Benchmarking
-
-Coming.
 
 
-### Usage
+### Usage using Swift Package Manager
 
-Coming.
 
 Create a directory where you will create your application:
 
