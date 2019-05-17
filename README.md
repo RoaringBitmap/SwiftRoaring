@@ -97,10 +97,6 @@ for i in bitmap {
 
 ```
 
-### Documentation
-
-https://piotte13.github.io/SwiftRoaring/
-
 ### Development
 
 You can build using Swift Package Manager as follows:
