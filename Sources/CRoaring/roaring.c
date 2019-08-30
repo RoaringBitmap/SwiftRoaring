@@ -1,4 +1,4 @@
-/* auto-generated on Ven 17 mai 2019 14:49:35 EDT. Do not edit! */
+/* auto-generated on Fri Aug 30 19:43:10 EDT 2019. Do not edit! */
 #include "roaring.h"
 
 /* used for http://dmalloc.com/ Dmalloc - Debug Malloc Library */
@@ -515,6 +515,10 @@ int32_t intersect_vector16_cardinality(const uint16_t *__restrict__ A,
     return (int32_t)count;
 }
 
+/////////
+// Warning:
+// This function may not be safe if A == C or B == C.
+/////////
 int32_t difference_vector16(const uint16_t *__restrict__ A, size_t s_a,
                             const uint16_t *__restrict__ B, size_t s_b,
                             uint16_t *C) {
@@ -638,7 +642,16 @@ int32_t difference_vector16(const uint16_t *__restrict__ A, size_t s_a,
         }
     }
     if (i_a < s_a) {
-        memmove(C + count, A + i_a, sizeof(uint16_t) * (s_a - i_a));
+        if(C == A) {
+          assert(count <= i_a);
+          if(count < i_a) {
+            memmove(C + count, A + i_a, sizeof(uint16_t) * (s_a - i_a));
+          }
+        } else {
+           for(size_t i = 0; i < (s_a - i_a); i++) {
+                C[count + i] = A[i + i_a];
+           }
+        }
         count += (int32_t)(s_a - i_a);
     }
     return count;
@@ -1553,6 +1566,7 @@ static int uint16_compare(const void *a, const void *b) {
 }
 
 // a one-pass SSE union algorithm
+// This function may not be safe if array1 == output or array2 == output.
 uint32_t union_vector16(const uint16_t *__restrict__ array1, uint32_t length1,
                         const uint16_t *__restrict__ array2, uint32_t length2,
                         uint16_t *__restrict__ output) {
@@ -3063,9 +3077,15 @@ void array_container_andnot(const array_container_t *array_1,
     if (out->capacity < array_1->cardinality)
         array_container_grow(out, array_1->cardinality, false);
 #ifdef ROARING_VECTOR_OPERATIONS_ENABLED
-    out->cardinality =
-        difference_vector16(array_1->array, array_1->cardinality,
+    if((out != array_1) && (out != array_2)) {
+      out->cardinality =
+          difference_vector16(array_1->array, array_1->cardinality,
                             array_2->array, array_2->cardinality, out->array);
+     } else {
+      out->cardinality =
+        difference_uint16(array_1->array, array_1->cardinality, array_2->array,
+                          array_2->cardinality, out->array);
+     }
 #else
     out->cardinality =
         difference_uint16(array_1->array, array_1->cardinality, array_2->array,
@@ -3420,7 +3440,7 @@ bitset_container_t *bitset_container_create(void) {
         return NULL;
     }
     // sizeof(__m256i) == 32
-    bitset->array = (uint64_t *)aligned_malloc(
+    bitset->array = (uint64_t *)roaring_bitmap_aligned_malloc(
         32, sizeof(uint64_t) * BITSET_CONTAINER_SIZE_IN_WORDS);
     if (!bitset->array) {
         free(bitset);
@@ -3469,7 +3489,7 @@ void bitset_container_add_from_range(bitset_container_t *bitset, uint32_t min,
 /* Free memory. */
 void bitset_container_free(bitset_container_t *bitset) {
     if(bitset->array != NULL) {// Jon Strabala reports that some tools complain otherwise
-      aligned_free(bitset->array);
+      roaring_bitmap_aligned_free(bitset->array);
       bitset->array = NULL; // pedantic
     }
     free(bitset);
@@ -3484,7 +3504,7 @@ bitset_container_t *bitset_container_clone(const bitset_container_t *src) {
         return NULL;
     }
     // sizeof(__m256i) == 32
-    bitset->array = (uint64_t *)aligned_malloc(
+    bitset->array = (uint64_t *)roaring_bitmap_aligned_malloc(
         32, sizeof(uint64_t) * BITSET_CONTAINER_SIZE_IN_WORDS);
     if (!bitset->array) {
         free(bitset);
@@ -3918,7 +3938,7 @@ void* bitset_container_deserialize(const char *buf, size_t buf_len) {
   if((ptr = (bitset_container_t *)malloc(sizeof(bitset_container_t))) != NULL) {
     memcpy(ptr, buf, sizeof(bitset_container_t));
     // sizeof(__m256i) == 32
-    ptr->array = (uint64_t *) aligned_malloc(32, l);
+    ptr->array = (uint64_t *) roaring_bitmap_aligned_malloc(32, l);
     if (! ptr->array) {
         free(ptr);
         return NULL;
@@ -4060,19 +4080,16 @@ uint16_t bitset_container_maximum(const bitset_container_t *container) {
 
 /* Returns the number of values equal or smaller than x */
 int bitset_container_rank(const bitset_container_t *container, uint16_t x) {
-  uint32_t x32 = x;
+  // credit: aqrit
   int sum = 0;
-  uint32_t k = 0;
-  for (; k + 63 <= x32; k += 64)  {
-    sum += hamming(container->array[k / 64]);
+  int i = 0;
+  for (int end = x / 64; i < end; i++){
+    sum += hamming(container->array[i]);
   }
-  // at this point, we have covered everything up to k, k not included.
-  // we have that k < x, but not so large that k+63<=x
-  // k is a power of 64
-  int bitsleft = x32 - k + 1;// will be in [0,64)
-  uint64_t leftoverword = container->array[k / 64];// k / 64 should be within scope
-  leftoverword = leftoverword << ((64 - bitsleft) & 63); // need the "&63" otherwise we shift by 64 which is undefined.
-  sum += hamming(leftoverword);
+  uint64_t lastword = container->array[i];
+  uint64_t lastpos = UINT64_C(1) << (x % 64);
+  uint64_t mask = lastpos + lastpos - 1; // smear right
+  sum += hamming(lastword & mask);
   return sum;
 }
 
@@ -6252,7 +6269,7 @@ bool array_array_container_inplace_union(array_container_t *src_1,
           return false;  // not a bitset
         } else {
           memmove(src_1->array + src_2->cardinality, src_1->array, src_1->cardinality * sizeof(uint16_t));
-          src_1->cardinality = (int32_t)fast_union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
+          src_1->cardinality = (int32_t)union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
                                   src_2->array, src_2->cardinality, src_1->array);
           return false; // not a bitset
         }
@@ -6324,7 +6341,7 @@ bool array_array_container_lazy_inplace_union(array_container_t *src_1,
           return false;  // not a bitset
         } else {
           memmove(src_1->array + src_2->cardinality, src_1->array, src_1->cardinality * sizeof(uint16_t));
-          src_1->cardinality = (int32_t)fast_union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
+          src_1->cardinality = (int32_t)union_uint16(src_1->array + src_2->cardinality, src_1->cardinality,
                                   src_2->array, src_2->cardinality, src_1->array);
           return false; // not a bitset
         }
@@ -8712,8 +8729,8 @@ uint64_t roaring_bitmap_range_cardinality(const roaring_bitmap_t *ra,
     range_end--; // make range_end inclusive
     // now we have: 0 <= range_start <= range_end <= UINT32_MAX
 
-    int minhb = range_start >> 16;
-    int maxhb = range_end >> 16;
+    uint16_t minhb = range_start >> 16;
+    uint16_t maxhb = range_end >> 16;
 
     uint64_t card = 0;
 
