@@ -50,8 +50,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * Creates a new bitmap from a pointer of uint32_t integers
     */
     public init(values: [UInt32]) {
-        let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: values)
-        self.ptr = croaring.roaring_bitmap_of_ptr(values.count, ptr)!
+        self.ptr = croaring.roaring_bitmap_of_ptr(values.count, values)!
     }
 
     public required init(arrayLiteral: Element...) {
@@ -186,18 +185,14 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     /**
-    * Inplace version of roaring_bitmap_or, modifies x1. TDOO: decide whether x1 ==
-    *x2 ok
-    *
+    * Inplace version of roaring_bitmap_or, modifies x1.
     */
     public func formUnion(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_or_inplace(self.ptr, x.ptr)
 
     }
     /**
-    * Inplace version of roaring_bitmap_or, modifies x1. TDOO: decide whether x1 ==
-    *x2 ok
-    *
+    * Inplace version of roaring_bitmap_or, modifies x1.
     */
     public static func |=(left: RoaringBitmap, right: RoaringBitmap){
         left.formUnion(right)
@@ -207,16 +202,14 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * Compute the union of 'number' bitmaps. See also roaring_bitmap_or_many_heap.
     * Caller is responsible for freeing the
     * result.
-    *
     */
     public func unionMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
-        ptrArray.append(self.ptr)
-        for x in xs {
-            ptrArray.append(x.ptr)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
+        ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
+        for (index, bitmap) in xs.enumerated() {
+            ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(ptrArray.count, ptrArrayPtr))
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(xs.count + 1, ptr))
 
     }
 
@@ -228,14 +221,12 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     *
     */
     public func unionManyHeap(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
-        ptrArray.append(self.ptr)
-        for x in xs {
-            ptrArray.append(x.ptr)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
+        ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
+        for (index, bitmap) in xs.enumerated() {
+            ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(ptrArray.count), ptrArrayPtr))
-
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(xs.count + 1), ptr))
     }
 
     /**
@@ -278,14 +269,12 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     *
     */
     public func symmetricDifferenceMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        var ptrArray: [UnsafePointer<roaring_bitmap_t>?] = []
-        for x in xs {
-            ptrArray.append(x.ptr)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
+        ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
+        for (index, bitmap) in xs.enumerated() {
+            ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        ptrArray.append(self.ptr)
-        let ptrArrayPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: ptrArray)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor_many(ptrArray.count, ptrArrayPtr))
-
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor_many(xs.count + 1, ptr))
     }
 
 
@@ -493,8 +482,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     *
     */
     public func addMany(values: [UInt32]) {
-        let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: values)
-        croaring.roaring_bitmap_add_many(self.ptr, values.count, ptr)
+        croaring.roaring_bitmap_add_many(self.ptr, values.count, values)
     }
 
     /**
@@ -680,9 +668,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * Returns how many bytes were written which should be
     * roaring_bitmap_size_in_bytes(ra).
     */
-    public func serialize(buffer: [Int8]) -> size_t {
-        let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return croaring.roaring_bitmap_serialize(self.ptr, ptr)
+    public func serialize(buffer: inout [Int8]) -> size_t {
+        return croaring.roaring_bitmap_serialize(self.ptr, &buffer)
     }
 
     /**  use with roaring_bitmap_serialize
@@ -690,8 +677,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * compatible with Java and Go implementations
     */
     public static func deserialize(buffer: [Int8]) -> RoaringBitmap {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_deserialize(bufferPtr)!)
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_deserialize(buffer)!)
     }
 
     /**
@@ -713,8 +699,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * call roaring_bitmap_portable_deserialize_safe.
     */
     public static func portableDeserialize(buffer: [Int8]) -> RoaringBitmap {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize(bufferPtr)!)
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize(buffer)!)
     }
 
     /**
@@ -725,8 +710,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * In case of failure, a null pointer is returned.
     */
     public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize_safe(bufferPtr, maxbytes)!)
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize_safe(buffer, maxbytes)!)
     }
 
     /**
@@ -737,8 +721,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * https://github.com/RoaringBitmap/RoaringFormatSpec
     */
     public static func portableDeserializeSize(buffer: [Int8], maxbytes: size_t) -> size_t {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return croaring.roaring_bitmap_portable_deserialize_size(bufferPtr, maxbytes)
+        return croaring.roaring_bitmap_portable_deserialize_size(buffer, maxbytes)
     }
 
 
@@ -760,10 +743,10 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     * roaring_bitmap_portable_size_in_bytes(ra).  See format specification at
     * https://github.com/RoaringBitmap/RoaringFormatSpec
     */
-    public func portableSerialize(buffer: [Int8]) -> size_t {
-        let bufferPtr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: buffer)
-        return croaring.roaring_bitmap_portable_serialize(self.ptr, bufferPtr)
+    public func portableSerialize(buffer: inout [Int8]) -> size_t {
+        return croaring.roaring_bitmap_portable_serialize(self.ptr, &buffer)
     }
+
 
     /**
     * If the size of the roaring bitmap is strictly greater than rank, then this
@@ -862,7 +845,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
       }
       return Int(truncatingIfNeeded:hash)
     }
-    
+
     public func hash(into hasher: inout Hasher) {
       for i in self {
         i.hash(into: &hasher)

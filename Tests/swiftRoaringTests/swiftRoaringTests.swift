@@ -268,8 +268,8 @@ class swiftRoaringTests: XCTestCase {
     func testSerialize(){
         rbm.addRangeClosed(min:0, max:500)
         let size = rbm.sizeInBytes()
-        let buffer = [Int8](repeating: 0, count: size)
-        XCTAssertEqual(rbm.serialize(buffer: buffer), size)
+        var buffer = [Int8](repeating: 0, count: size)
+        XCTAssertEqual(rbm.serialize(buffer: &buffer), size)
         let deserializedRbm = RoaringBitmap.deserialize(buffer: buffer)
         XCTAssertTrue(deserializedRbm == rbm)
 
@@ -278,8 +278,8 @@ class swiftRoaringTests: XCTestCase {
     func testPortableSerialize(){
         rbm.addRangeClosed(min:0, max:500)
         let size = rbm.portableSizeInBytes()
-        let buffer = [Int8](repeating: 0, count: size)
-        XCTAssertEqual(rbm.portableSerialize(buffer: buffer), size)
+        var buffer = [Int8](repeating: 0, count: size)
+        XCTAssertEqual(rbm.portableSerialize(buffer: &buffer), size)
         let deserializedRbm = RoaringBitmap.portableDeserialize(buffer: buffer)
         XCTAssertTrue(deserializedRbm == rbm)
         let safeSize = RoaringBitmap.portableDeserializeSize(buffer: buffer, maxbytes: size)
