@@ -101,7 +101,7 @@ for i in bitmap {
 You can build using Swift Package Manager as follows:
 
 ```bash    
-swift build  -Xcc -march=native  --configuration release
+swift build  --configuration release
 $(swift build   --configuration release  --show-bin-path)/fun
 ```
 You can run tests using Swift Package Manager as follows:
