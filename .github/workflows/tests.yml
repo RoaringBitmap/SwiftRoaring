@@ -1,82 +1,17 @@
-name: CI
-on: [pull_request]
-jobs:
-  smoke:
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - run: swift test --generate-linuxmain
-  macOS:
-    needs: smoke
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        xcode:
-        - 11.3   # Swift 5.1
-    steps:
-    - uses: actions/checkout@v2
-    - name: setup-xcode
-      uses: maxim-lobanov/setup-xcode@1.0
-      with:
-        xcode-version: ${{ matrix.xcode }}
-    - run: swift --version
-    - run: swift test --parallel
-  otherOS:
-    needs: smoke
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        destination:
-        - platform=iOS Simulator,OS=latest,name=iPhone 11
-        - platform=tvOS Simulator,OS=latest,name=Apple TV
-        - platform=macOS
-    steps:
-    - uses: actions/checkout@v2
-    - uses: maxim-lobanov/setup-xcode@1.0
-      with:
-        xcode-version: 12  # Swift 5.3
-    - run: swift --version
-    - run: swift package generate-xcodeproj
-    - uses: sersoft-gmbh/xcodebuild-action@v1
-      with:
-        project: Path.swift.xcodeproj
-        scheme: Path.swift-Package
-        destination: ${{ matrix.destination }}
-        action: test
-    - uses: codecov/codecov-action@v1
-  watchOS:
-    needs: smoke
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v2
-    - run: swift package generate-xcodeproj
-    - uses: sersoft-gmbh/xcodebuild-action@v1
-      with:
-        project: Path.swift.xcodeproj
-        scheme: Path.swift-Package
-        destination: platform=watchOS Simulator,OS=latest,name=Apple Watch Series 5 - 40mm
-        action: build
-  linux-4-2:
-    needs: smoke
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: fwal/setup-swift@v1
-      with:
-        swift-version: 4.2
-    - run: swift test --parallel
-  linux:
-    needs: smoke
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        swift:
-        - 5.0.3
-        - 5.1
-        - 5.2
-    steps:
-    - uses: actions/checkout@v2
-    - uses: fwal/setup-swift@v1
-      with:
-        swift-version: ${{ matrix.swift }}
-    - run: swift test --parallel 
+name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+runs-on: ${{ matrix.os }}
+strategy:
+  matrix:
+    os: [ubuntu-latest, macos-latest]
+    swift: ["5.1.0", "4.2.4"]
+steps:
+- uses: fwal/setup-swift@v1
+  with:
+    swift-version: ${{ matrix.swift }}
+- name: Get swift version
+  run: swift --version
+- uses: actions/checkout@v2
+- name: Build
+  run: swift build
+- name: Run tests
+  run: swift test
