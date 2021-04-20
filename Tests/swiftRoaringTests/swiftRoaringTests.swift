@@ -29,7 +29,9 @@ extension swiftRoaringTests {
             ("testStatistics", testStatistics),
             ("testJaccardIndex", testJaccardIndex),
             ("testDescription", testDescription), 
-            ("testHashValue", testHashValue),    
+            ("testHashValue", testHashValue),   
+            ("testBase64", testBase64),    
+
         ]
     }
 }
@@ -285,8 +287,32 @@ class swiftRoaringTests: XCTestCase {
         let safeSize = RoaringBitmap.portableDeserializeSize(buffer: buffer, maxbytes: size)
         let deserializedSafeRbm = RoaringBitmap.portableDeserializeSafe(buffer: buffer, maxbytes: safeSize)
         XCTAssertTrue(deserializedSafeRbm == rbm)
-
     }
+
+    func testBase64(){
+        let bitmap = RoaringBitmap()
+        for i in 0..<50 { 
+          // from https://github.com/RoaringBitmap/SwiftRoaring/issues/1
+          let random = Int.random(in: 0...1)
+          if random == 0 {
+            bitmap.add(UInt32(i))
+          }
+        } 
+        let size = rbm.portableSizeInBytes()
+        var buffer = [Int8](repeating: 0, count: size)
+        XCTAssertEqual(rbm.portableSerialize(buffer: &buffer), size)
+        let uint8Buffer = buffer.map { UInt8(bitPattern: $0) }
+        let base64Encoded = Data(uint8Buffer).base64EncodedString()
+        let decoded = Data(base64Encoded: base64Encoded)!
+        XCTAssertEqual(decoded.count, size)
+        _ = buffer.withUnsafeMutableBytes { decoded.copyBytes(to: $0) }
+        let deserializedRbm = RoaringBitmap.portableDeserialize(buffer: buffer)
+        XCTAssertTrue(deserializedRbm == rbm)
+        let safeSize = RoaringBitmap.portableDeserializeSize(buffer: buffer, maxbytes: size)
+        let deserializedSafeRbm = RoaringBitmap.portableDeserializeSafe(buffer: buffer, maxbytes: safeSize)
+        XCTAssertTrue(deserializedSafeRbm == rbm)
+    }
+
 
     func testStatistics(){
         rbm.addRangeClosed(min:0, max:500)

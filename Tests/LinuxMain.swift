@@ -1,7 +1,8 @@
 import XCTest
 
-@testable import swiftRoaringTests
+import swiftRoaringTests
 
-XCTMain([
-    testCase(swiftRoaringTests.allTests)
-])
+var tests = [XCTestCaseEntry]()
+tests += swiftRoaringTests.__allTests()
+
+XCTMain(tests)
