@@ -293,7 +293,7 @@ class swiftRoaringTests: XCTestCase {
         let bitmap = RoaringBitmap()
         for i in 0..<50 { 
           // from https://github.com/RoaringBitmap/SwiftRoaring/issues/1
-          let random = arc4random_uniform(2)
+          let random = Int.random(in: 0...1)
           if random == 0 {
             bitmap.add(UInt32(i))
           }
