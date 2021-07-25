@@ -1,5 +1,5 @@
 // !!! DO NOT EDIT - THIS IS AN AUTO-GENERATED FILE !!!
-// Created by amalgamation.sh on Mon  5 Jul 2021 13:06:13 EDT
+// Created by amalgamation.sh on Sun 25 Jul 2021 12:08:33 EDT
 
 /*
  * Copyright 2016-2020 The CRoaring authors
@@ -390,15 +390,15 @@ inline int __builtin_clzll(unsigned long long input_num) {
 
 /* software implementation avoids POPCNT */
 /*static inline int __builtin_popcountll(unsigned long long input_num) {
-	const uint64_t m1 = 0x5555555555555555; //binary: 0101...
-	const uint64_t m2 = 0x3333333333333333; //binary: 00110011..
-	const uint64_t m4 = 0x0f0f0f0f0f0f0f0f; //binary:  4 zeros,  4 ones ...
-	const uint64_t h01 = 0x0101010101010101; //the sum of 256 to the power of 0,1,2,3...
+  const uint64_t m1 = 0x5555555555555555; //binary: 0101...
+  const uint64_t m2 = 0x3333333333333333; //binary: 00110011..
+  const uint64_t m4 = 0x0f0f0f0f0f0f0f0f; //binary:  4 zeros,  4 ones ...
+  const uint64_t h01 = 0x0101010101010101; //the sum of 256 to the power of 0,1,2,3...
 
-	input_num -= (input_num >> 1) & m1;
-	input_num = (input_num & m2) + ((input_num >> 2) & m2);
-	input_num = (input_num + (input_num >> 4)) & m4;
-	return (input_num * h01) >> 56;
+  input_num -= (input_num >> 1) & m1;
+  input_num = (input_num & m2) + ((input_num >> 2) & m2);
+  input_num = (input_num + (input_num >> 4)) & m4;
+  return (input_num * h01) >> 56;
 }*/
 
 /* Use #define so this is effective even under /Ob0 (no inline) */
@@ -2305,7 +2305,7 @@ inline bool bitset_container_contains(const bitset_container_t *bitset,
 * is present in `bitset'.  Calls bitset_container_get_all.
 */
 static inline bool bitset_container_contains_range(const bitset_container_t *bitset,
-					uint32_t pos_start, uint32_t pos_end) {
+          uint32_t pos_start, uint32_t pos_end) {
     return bitset_container_get_range(bitset, pos_start, pos_end);
 }
 
@@ -11279,24 +11279,22 @@ CROARING_UNTARGET_REGION
 #endif // CROARING_IS_X64
 
 bool bitset_container_equals(const bitset_container_t *container1, const bitset_container_t *container2) {
-	if((container1->cardinality != BITSET_UNKNOWN_CARDINALITY) && (container2->cardinality != BITSET_UNKNOWN_CARDINALITY)) {
-		if(container1->cardinality != container2->cardinality) {
-			return false;
-		}
-    if (container1->cardinality == INT32_C(0x10000)) {
-        return true;
+  if((container1->cardinality != BITSET_UNKNOWN_CARDINALITY) && (container2->cardinality != BITSET_UNKNOWN_CARDINALITY)) {
+    if(container1->cardinality != container2->cardinality) {
+      return false;
     }
-	}
+    if (container1->cardinality == INT32_C(0x10000)) {
+      return true;
+    }
+  }
 #ifdef CROARING_IS_X64
   if( croaring_avx2() ) {
     return _avx2_bitset_container_equals(container1, container2);
   }
-#else
+#endif
   return memcmp(container1->words,
                 container2->words,
                 BITSET_CONTAINER_SIZE_IN_WORDS*sizeof(uint64_t)) == 0;
-#endif
-	return true;
 }
 
 bool bitset_container_is_subset(const bitset_container_t *container1,
