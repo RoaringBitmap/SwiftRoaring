@@ -191,15 +191,15 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * Caller is responsible for freeing the
      * result.
      */
+
     public func unionMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let ptr = UnsafeMutablePointer<UnsafePointerroaring_bitmap_t?>>.allocate(capacity: xs.count + 1)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
         return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(xs.count + 1, ptr))
     }
-
     /**
      * Compute the union of 'number' bitmaps using a heap. This can
      * sometimes be faster than roaring_bitmap_or_many which uses
@@ -208,7 +208,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      *
      */
     public func unionManyHeap(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let ptr = UnsafeMutablePointer<UnsafePointerroaring_bitmap_t?>>.allocate(capacity: xs.count + 1)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
@@ -253,7 +253,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      *
      */
     public func symmetricDifferenceMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
-        let ptr = UnsafeMutablePointer<UnsafePointerroaring_bitmap_t?>>.allocate(capacity: xs.count + 1)
+        let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
