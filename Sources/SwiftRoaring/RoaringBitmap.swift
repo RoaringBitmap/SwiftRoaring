@@ -92,7 +92,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func formIntersection(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_and_inplace(self.ptr, x.ptr)
-
     }
     /**
      * Inplace version modifies x1, x1 == x2 is allowed
@@ -107,7 +106,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func intersectionCount(_ x: RoaringBitmap) -> UInt64 {
         return croaring.roaring_bitmap_and_cardinality(self.ptr, x.ptr)
-
     }
 
     /**
@@ -116,7 +114,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func intersect(_ x: RoaringBitmap) -> Bool {
         return croaring.roaring_bitmap_intersect(self.ptr, x.ptr)
-
     }
 
     /**
@@ -129,7 +126,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func jaccardIndex(_ x: RoaringBitmap) -> Double {
         return croaring.roaring_bitmap_jaccard_index(self.ptr, x.ptr)
-
     }
 
     /**
@@ -138,7 +134,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func unionCount(_ x: RoaringBitmap) -> UInt64 {
         return croaring.roaring_bitmap_or_cardinality(self.ptr, x.ptr)
-
     }
 
     /**
@@ -147,7 +142,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func subtractingCount(_ x: RoaringBitmap) -> UInt64 {
         return croaring.roaring_bitmap_andnot_cardinality(self.ptr, x.ptr)
-
     }
 
     /**
@@ -163,7 +157,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func symmetricDifferenceCount(_ x: RoaringBitmap) -> UInt64 {
         return croaring.roaring_bitmap_xor_cardinality(self.ptr, x.ptr)
-
     }
 
     /**
@@ -173,7 +166,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func union(_ x: RoaringBitmap) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
         return x2
-
     }
     /**
      * Computes the union between two bitmaps and returns new bitmap. The caller is
@@ -188,7 +180,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func formUnion(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_or_inplace(self.ptr, x.ptr)
-
     }
     /**
      * Inplace version of roaring_bitmap_or, modifies x1.
@@ -209,7 +200,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
         return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(xs.count + 1, ptr))
-
     }
 
     /**
@@ -235,7 +225,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func symmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
         return x2
-
     }
     /**
      * Computes the symmetric difference (xor) between two bitmaps
@@ -251,7 +240,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func formSymmetricDifference(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_xor_inplace(self.ptr, x.ptr)
-
     }
     /**
      * Inplace version of roaring_bitmap_xor, modifies x1. x1 != x2.
@@ -283,7 +271,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func subtracting(_ x: RoaringBitmap) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
         return x2
-
     }
     /**
      * Computes the  difference (andnot) between two bitmaps
@@ -299,7 +286,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func subtract(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_andnot_inplace(self.ptr, x.ptr)
-
     }
     /**
      * Inplace version of roaring_bitmap_andnot, modifies x1. x1 != x2.
@@ -314,7 +300,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func equals(_ x: RoaringBitmap) -> Bool {
         return croaring.roaring_bitmap_equals(self.ptr, x.ptr)
-
     }
     /**
      * Return true if the two bitmaps contain the same elements.
@@ -334,7 +319,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func isSubset(of x: RoaringBitmap) -> Bool {
         return croaring.roaring_bitmap_is_subset(self.ptr, x.ptr)
-
     }
 
     /**
@@ -344,7 +328,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func isStrictSubset(of x: RoaringBitmap) -> Bool {
         return croaring.roaring_bitmap_is_strict_subset(self.ptr, x.ptr)
-
     }
 
     /**
@@ -363,7 +346,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func lazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
         return x2
-
     }
 
     /**
@@ -374,7 +356,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func formLazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) {
         croaring.roaring_bitmap_lazy_or_inplace(self.ptr, x.ptr, bitsetconversion)
-
     }
 
     /**
@@ -386,7 +367,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func repairAfterLazy() {
         croaring.roaring_bitmap_repair_after_lazy(self.ptr)
-
     }
 
     /**
@@ -403,7 +383,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func lazySymmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
         return x2
-
     }
 
     /**
@@ -413,7 +392,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func formLazySymmetricDifference(_ x: RoaringBitmap) {
         croaring.roaring_bitmap_lazy_xor_inplace(self.ptr, x.ptr)
-
     }
 
     /**
@@ -425,7 +403,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func flip(rangeStart: UInt64, rangeEnd: UInt64) -> RoaringBitmap {
         let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
         return x2
-
     }
 
     /**
@@ -747,7 +724,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func select(rank: UInt32, value: UInt32) -> Bool {
         var cpy = value
         return croaring.roaring_bitmap_select(self.ptr, rank, &cpy)
-
     }
 
     /**
@@ -756,7 +732,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func rank(value: UInt32) -> UInt64 {
         return croaring.roaring_bitmap_rank(self.ptr, value)
-
     }
 
     /**
@@ -765,7 +740,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func min() -> UInt32 {
         return croaring.roaring_bitmap_minimum(self.ptr)
-
     }
 
     /**
@@ -774,7 +748,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      */
     public func max() -> UInt32 {
         return croaring.roaring_bitmap_maximum(self.ptr)
-
     }
 
     /**
@@ -814,7 +787,6 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
             }
             return nil
         }
-
     }
 
     /* returns a string representation of the bitset */
