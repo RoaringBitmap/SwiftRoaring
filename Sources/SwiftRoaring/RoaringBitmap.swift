@@ -81,8 +81,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// caller is
     /// responsible for memory management.
     ///
-    public static func &(left: RoaringBitmap, right: RoaringBitmap) -> Self {
-        Self(ptr: croaring.roaring_bitmap_and(left.ptr, right.ptr))
+    public static func &(lhs: RoaringBitmap, rhs: RoaringBitmap) -> Self {
+        Self(ptr: croaring.roaring_bitmap_and(lhs.ptr, rhs.ptr))
     }
 
     ///
@@ -94,8 +94,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Inplace version modifies x1, x1 == x2 is allowed
     ///
-    public static func &=(left: RoaringBitmap, right: RoaringBitmap) {
-        left.formIntersection(right)
+    public static func &=(lhs: RoaringBitmap, rhs: RoaringBitmap) {
+        lhs.formIntersection(rhs)
     }
 
     ///
@@ -162,8 +162,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the union between two bitmaps and returns new bitmap. The caller is
     /// responsible for memory management.
     ///
-    public static func |(left: RoaringBitmap, right: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_or(left.ptr, right.ptr))
+    public static func |(lhs: RoaringBitmap, rhs: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_or(lhs.ptr, rhs.ptr))
     }
 
     ///
@@ -175,8 +175,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Inplace version of `roaring_bitmap_or, modifies` x1.
     ///
-    public static func |=(left: RoaringBitmap, right: RoaringBitmap) {
-        left.formUnion(right)
+    public static func |=(lhs: RoaringBitmap, rhs: RoaringBitmap) {
+        lhs.formUnion(rhs)
     }
 
     ///
@@ -217,8 +217,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the symmetric difference (xor) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public static func ^(left: RoaringBitmap, right: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_xor(left.ptr, right.ptr))
+    public static func ^(lhs: RoaringBitmap, rhs: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_xor(lhs.ptr, rhs.ptr))
     }
 
     ///
@@ -230,8 +230,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Inplace version of roaring_bitmap_xor, modifies x1. x1 != x2.
     ///
-    public static func ^=(left: RoaringBitmap, right: RoaringBitmap) {
-        left.formSymmetricDifference(right)
+    public static func ^=(lhs: RoaringBitmap, rhs: RoaringBitmap) {
+        lhs.formSymmetricDifference(rhs)
     }
 
     ///
@@ -259,8 +259,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the  difference (andnot) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public static func -(left: RoaringBitmap, right: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_andnot(left.ptr, right.ptr))
+    public static func -(lhs: RoaringBitmap, rhs: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_andnot(lhs.ptr, rhs.ptr))
     }
 
     ///
@@ -272,8 +272,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Inplace version of roaring_bitmap_andnot, modifies x1. x1 != x2.
     ///
-    public static func -=(left: RoaringBitmap, right: RoaringBitmap) {
-        left.subtract(right)
+    public static func -=(lhs: RoaringBitmap, rhs: RoaringBitmap) {
+        lhs.subtract(rhs)
     }
 
     ///
@@ -282,8 +282,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Return true if the two bitmaps contain the same elements.
     ///
-    public static func ==(left: RoaringBitmap, right: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_equals(left.ptr, right.ptr)
+    public static func ==(lhs: RoaringBitmap, rhs: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_equals(lhs.ptr, rhs.ptr)
     }
 
     ///
