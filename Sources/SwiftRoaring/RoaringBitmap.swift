@@ -74,8 +74,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      *
      */
     public func intersection(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
     }
     /**
      * Computes the intersection between two bitmaps and returns new bitmap. The
@@ -164,8 +163,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * responsible for memory management.
      */
     public func union(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
     }
     /**
      * Computes the union between two bitmaps and returns new bitmap. The caller is
@@ -223,8 +221,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * and returns new bitmap. The caller is responsible for memory management.
      */
     public func symmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
     }
     /**
      * Computes the symmetric difference (xor) between two bitmaps
@@ -269,8 +266,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * and returns new bitmap. The caller is responsible for memory management.
      */
     public func subtracting(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
     }
     /**
      * Computes the  difference (andnot) between two bitmaps
@@ -344,8 +340,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * whether container-container operations force a bitset conversion.
      **/
     public func lazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
     }
 
     /**
@@ -381,8 +376,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      *
      */
     public func lazySymmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
     }
 
     /**
@@ -401,8 +395,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      * Areas outside the range are passed through unchanged.
      */
     public func flip(rangeStart: UInt64, rangeEnd: UInt64) -> RoaringBitmap {
-        let x2 = RoaringBitmap(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
-        return x2
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
     }
 
     /**
@@ -425,8 +418,7 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
      *
      */
     public func copy() -> RoaringBitmap {
-        let cpy = RoaringBitmap(ptr: croaring.roaring_bitmap_copy(self.ptr))
-        return cpy
+        return RoaringBitmap(ptr: croaring.roaring_bitmap_copy(self.ptr))
     }
 
     /**
