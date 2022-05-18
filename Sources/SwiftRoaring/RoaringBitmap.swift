@@ -294,20 +294,11 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /**
      * Return true if the two bitmaps contain the same elements.
      */
-    public func equals(_ x: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_equals(self.ptr, x.ptr)
-    }
     /**
      * Return true if the two bitmaps contain the same elements.
      */
     public static func ==(left: RoaringBitmap, right: RoaringBitmap) -> Bool {
-        return left.equals(right)
-    }
-    /**
-     * Return true if the two bitmaps DO NOT contain the same elements.
-     */
-    public static func !=(left: RoaringBitmap, right: RoaringBitmap) -> Bool {
-        return !(left == right)
+        return croaring.roaring_bitmap_equals(left.ptr, right.ptr)
     }
 
     /**

@@ -111,9 +111,8 @@ class swiftRoaringTests: XCTestCase {
 
     func testEquals() {
         let cpy = rbm.copy()
-        XCTAssertTrue(cpy.equals(rbm))
         XCTAssertTrue(cpy == rbm)
-        XCTAssertEqual(cpy != rbm, false)
+        XCTAssertFalse(cpy != rbm)
     }
 
     func testSubset() {
@@ -347,10 +346,6 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func makeList(_ n: Int) -> [UInt32] {
-         #if os(Linux)
-            return (0..<n).map { _ in UInt32(Int.random(in: 0 ..< 1000)) }
-        #else
-            return (0..<n).map { _ in UInt32(arc4random_uniform(1000)+1) }
-        #endif
+        return (0..<n).map { _ in UInt32.random(in: 0 ..< 1000) }
     }
 }
