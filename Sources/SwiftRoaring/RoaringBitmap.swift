@@ -8,8 +8,9 @@ public typealias RoaringStatistics = roaring_statistics_t
 ///
 /// Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
 ///
-public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
-                            Hashable, ExpressibleByArrayLiteral {
+public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
+                                  Hashable, ExpressibleByArrayLiteral, SetAlgebra {
+
     var ptr: UnsafeMutablePointer<roaring_bitmap_t>
     public typealias Element = UInt32
 
@@ -19,14 +20,14 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Creates a new bitmap (initially empty)
     ///
-    public init() {
+    required public init() {
         self.ptr = croaring.roaring_bitmap_create()!
     }
 
     ///
     /// Creates a new bitmap using a given ptr
     ///
-    private init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
+    required public init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
         self.ptr = ptr
     }
 
@@ -72,16 +73,16 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// caller is
     /// responsible for memory management.
     ///
-    public func intersection(_ x: RoaringBitmap) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
+    public func intersection(_ x: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
     }
     ///
     /// Computes the intersection between two bitmaps and returns new bitmap. The
     /// caller is
     /// responsible for memory management.
     ///
-    public static func &(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap {
-        return left.intersection(right)
+    public static func &(left: RoaringBitmap, right: RoaringBitmap) -> Self {
+        Self(ptr: croaring.roaring_bitmap_and(left.ptr, right.ptr))
     }
 
     ///
@@ -154,15 +155,15 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the union between two bitmaps and returns new bitmap. The caller is
     /// responsible for memory management.
     ///
-    public func union(_ x: RoaringBitmap) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
+    public func union(_ x: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
     }
     ///
     /// Computes the union between two bitmaps and returns new bitmap. The caller is
     /// responsible for memory management.
     ///
-    public static func |(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap {
-        return left.union(right)
+    public static func |(left: RoaringBitmap, right: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_or(left.ptr, right.ptr))
     }
 
     ///
@@ -182,13 +183,13 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Compute the union of 'number' bitmaps. See also `roaring_bitmap_or_many_heap`.
     /// Caller is responsible for freeing the result.
     ///
-    public func unionMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
+    public func unionMany(_ xs: [RoaringBitmap]) -> Self {
         let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many(xs.count + 1, ptr))
+        return Self(ptr: croaring.roaring_bitmap_or_many(xs.count + 1, ptr))
     }
     ///
     /// Compute the union of 'number' bitmaps using a heap. This can
@@ -196,28 +197,28 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// a naive algorithm. Caller is responsible for freeing the
     /// result.
     ///
-    public func unionManyHeap(_ xs: [RoaringBitmap]) -> RoaringBitmap {
+    public func unionManyHeap(_ xs: [RoaringBitmap]) -> Self {
         let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(xs.count + 1), ptr))
+        return Self(ptr: croaring.roaring_bitmap_or_many_heap(UInt32(xs.count + 1), ptr))
     }
 
     ///
     /// Computes the symmetric difference (xor) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public func symmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
+    public func symmetricDifference(_ x: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
     }
     ///
     /// Computes the symmetric difference (xor) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public static func ^(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap {
-        return left.symmetricDifference(right)
+    public static func ^(left: RoaringBitmap, right: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_xor(left.ptr, right.ptr))
     }
 
     ///
@@ -238,28 +239,28 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Caller is responsible for freeing the
     /// result.
     ///
-    public func symmetricDifferenceMany(_ xs: [RoaringBitmap]) -> RoaringBitmap {
+    public func symmetricDifferenceMany(_ xs: [RoaringBitmap]) -> Self {
         let ptr = UnsafeMutablePointer<Optional<UnsafePointer<roaring_bitmap_t>>>.allocate(capacity: xs.count + 1)
         ptr[0] = UnsafePointer<roaring_bitmap_t>(self.ptr)
         for (index, bitmap) in xs.enumerated() {
             ptr[index + 1] = UnsafePointer<roaring_bitmap_t>(bitmap.ptr)
         }
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_xor_many(xs.count + 1, ptr))
+        return Self(ptr: croaring.roaring_bitmap_xor_many(xs.count + 1, ptr))
     }
 
     ///
     /// Computes the  difference (andnot) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public func subtracting(_ x: RoaringBitmap) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
+    public func subtracting(_ x: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
     }
     ///
     /// Computes the  difference (andnot) between two bitmaps
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
-    public static func -(left: RoaringBitmap, right: RoaringBitmap) -> RoaringBitmap {
-        return left.subtracting(right)
+    public static func -(left: RoaringBitmap, right: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_andnot(left.ptr, right.ptr))
     }
 
     ///
@@ -314,8 +315,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// The bitsetconversion conversion is a flag which determines
     /// whether container-container operations force a bitset conversion.
     ///
-    public func lazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
+    public func lazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
     }
 
     ///
@@ -349,8 +350,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// to call roaring_bitmap_repair_after_lazy after executing "lazy" computations.
     /// It is safe to repeatedly call roaring_bitmap_lazy_xor_inplace on the result.
     ///
-    public func lazySymmetricDifference(_ x: RoaringBitmap) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
+    public func lazySymmetricDifference(_ x: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
     }
 
     ///
@@ -367,8 +368,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// range_end - range_start.
     /// Areas outside the range are passed through unchanged.
     ///
-    public func flip(rangeStart: UInt64, rangeEnd: UInt64) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
+    public func flip(rangeStart: UInt64, rangeEnd: UInt64) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
     }
 
     ///
@@ -389,8 +390,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Copies a  bitmap. This does memory allocation. The caller is responsible for
     /// memory management.
     ///
-    public func copy() -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_copy(self.ptr))
+    public func copy() -> Self {
+        return Self(ptr: croaring.roaring_bitmap_copy(self.ptr))
     }
 
     ///
@@ -444,19 +445,44 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         croaring.roaring_bitmap_add_range(self.ptr, min, max)
     }
 
+    public func insert(_ newMember: UInt32) -> (inserted: Bool, memberAfterInsert: UInt32) {
+        let contains = self.contains(newMember)
+        if !contains {
+            self.add(newMember)
+        }
+        return (!contains, newMember)
+    }
+
+    public func update(with newMember: UInt32) -> UInt32? {
+        let (inserted, _ ) = self.insert(newMember)
+        if inserted {
+            return nil
+        } else {
+            return newMember
+        }
+    }
+
     ///
     /// Remove value x
     ///
-    public func remove(_ value: UInt32) {
+    @discardableResult
+    public func remove(_ value: UInt32) -> UInt32? {
+        let result = self.contains(value)
         croaring.roaring_bitmap_remove(self.ptr, value)
+        if result {
+            return value
+        }
+        return nil
     }
 
-    /// Remove all values in range [min, max] */
+    ///
+    /// Remove all values in range [min, max]
+    ///
     public func removeRangeClosed(min: UInt32, max: UInt32) {
         croaring.roaring_bitmap_remove_range_closed(self.ptr, min, max)
     }
 
-    /// Remove all values in range [min, max) */
+    /// Remove all values in range [min, max)
     public func removeRange(min: UInt64, max: UInt64) {
         croaring.roaring_bitmap_remove_range(self.ptr, min, max)
     }
@@ -610,8 +636,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// see roaring_bitmap_portable_deserialize if you want a format that's
     /// compatible with Java and Go implementations
     ///
-    public static func deserialize(buffer: [Int8]) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_deserialize(buffer)!)
+    public static func deserialize(buffer: [Int8]) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_deserialize(buffer)!)
     }
 
     ///
@@ -632,8 +658,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// overflow. For a safer approach,
     /// call roaring_bitmap_portable_deserialize_safe.
     ///
-    public static func portableDeserialize(buffer: [Int8]) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize(buffer)!)
+    public static func portableDeserialize(buffer: [Int8]) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_portable_deserialize(buffer)!)
     }
 
     ///
@@ -643,8 +669,8 @@ public class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// https://github.com/RoaringBitmap/RoaringFormatSpec
     /// In case of failure, a null pointer is returned.
     ///
-    public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> RoaringBitmap {
-        return RoaringBitmap(ptr: croaring.roaring_bitmap_portable_deserialize_safe(buffer, maxbytes)!)
+    public static func portableDeserializeSafe(buffer: [Int8], maxbytes: size_t) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_portable_deserialize_safe(buffer, maxbytes)!)
     }
 
     ///
