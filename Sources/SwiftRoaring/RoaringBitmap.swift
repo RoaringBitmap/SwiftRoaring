@@ -879,13 +879,17 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// hash value for the bitset, this is expensive and should be buffered
     /// for performance
     ///
-    public func hash(into hasher: inout Hasher) {
+    public var hashValue: Int {
         let b: UInt32 = 31
         var hash: UInt32 = 0
         for i in self {
             hash = hash &* b &+ i
         }
-        let hashValue = Int(truncatingIfNeeded: hash)
-        hashValue.hash(into: &hasher)
+        return Int(hash)
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        let hash = self.hashValue
+        hash.hash(into: &hasher)
     }
 }

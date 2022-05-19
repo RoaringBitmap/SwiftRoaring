@@ -331,7 +331,8 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testHashValue() {
-        print(rbm.hashValue)
+        let r = RoaringBitmap(min: 0, max: 100, step: 2)
+        XCTAssert(r.hashValue == 3801178162)
     }
 
     func testCodable() {
