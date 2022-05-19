@@ -334,6 +334,18 @@ class swiftRoaringTests: XCTestCase {
         print(rbm.hashValue)
     }
 
+    func testCodable() {
+        let enc = JSONEncoder()
+        let dec = JSONDecoder()
+
+        let r = RoaringBitmap(min: 0, max: 100, step: 2)
+
+        let a = try! enc.encode(r)
+        let b = try! dec.decode(RoaringBitmap.self, from: a)
+
+        XCTAssert(r == b)
+    }
+
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>) {
         let randList1 = makeList(100)
         let randList2 = makeList(100)

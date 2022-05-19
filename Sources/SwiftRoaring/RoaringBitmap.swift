@@ -9,7 +9,7 @@ public typealias RoaringStatistics = roaring_statistics_t
 /// Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
 ///
 public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
-                                  Hashable, ExpressibleByArrayLiteral, SetAlgebra {
+                                  Hashable, ExpressibleByArrayLiteral, SetAlgebra, Codable {
 
     @usableFromInline
     var ptr: UnsafeMutablePointer<roaring_bitmap_t>
@@ -696,6 +696,26 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     @inlinable @inline(__always)
     public static func deserialize(buffer: [Int8]) -> Self {
         return Self(ptr: croaring.roaring_bitmap_deserialize(buffer)!)
+    }
+
+    ///
+    /// Encodable conformance
+    ///
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        let count = self.sizeInBytes()
+        var out = [Int8](repeating: 0, count: count)
+        let _ = self.serialize(buffer: &out)
+        try container.encode(out)
+    }
+
+    ///
+    /// Decodable conformance
+    ///
+    public init(from decoder: Decoder) throws {
+        var container = try decoder.unkeyedContainer()
+        let buffer = try container.decode([Int8].self)
+        self.ptr = croaring.roaring_bitmap_deserialize(buffer)!
     }
 
     ///
