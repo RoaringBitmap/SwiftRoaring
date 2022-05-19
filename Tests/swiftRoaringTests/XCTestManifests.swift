@@ -31,13 +31,13 @@ extension swiftRoaringTests {
         ("testStatistics", testStatistics),
         ("testSubset", testSubset),
         ("testToArray", testToArray),
-        ("testXor", testXor),
+        ("testXor", testXor)
     ]
 }
 
 public func __allTests() -> [XCTestCaseEntry] {
     return [
-        testCase(swiftRoaringTests.__allTests__swiftRoaringTests),
+        testCase(swiftRoaringTests.__allTests__swiftRoaringTests)
     ]
 }
 #endif

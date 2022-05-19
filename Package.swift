@@ -15,11 +15,11 @@ let package = Package(
         ),
         .target(
             name: "SwiftRoaring",
-            dependencies:["croaring"]
+            dependencies: ["croaring"]
         ),
         .testTarget(
             name: "swiftRoaringTests",
-            dependencies:["SwiftRoaring"]
+            dependencies: ["SwiftRoaring"]
         )
     ]
 )
