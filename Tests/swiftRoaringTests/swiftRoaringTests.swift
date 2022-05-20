@@ -339,9 +339,12 @@ class swiftRoaringTests: XCTestCase {
         let enc = JSONEncoder()
         let dec = JSONDecoder()
 
-        let r = RoaringBitmap(min: 0, max: 100, step: 2)
+        var r = RoaringBitmap(min: 0, max: 100, step: 2)
 
         let a = try! enc.encode(r)
+
+        let s = String(data: a, encoding: .utf8)!
+        print(s.count)
         let b = try! dec.decode(RoaringBitmap.self, from: a)
 
         XCTAssert(r == b)

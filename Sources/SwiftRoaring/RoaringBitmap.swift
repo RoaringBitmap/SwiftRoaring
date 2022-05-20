@@ -1,3 +1,4 @@
+import Foundation
 import croaring
 
 ///
@@ -704,9 +705,13 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     public func encode(to encoder: Encoder) throws {
         var container = encoder.unkeyedContainer()
         let count = self.sizeInBytes()
-        var out = [Int8](repeating: 0, count: count)
-        let _ = self.serialize(buffer: &out)
-        try container.encode(out)
+        var data = Data(count: count)
+
+        data.withUnsafeMutableBytes {
+            let ptr = $0.baseAddress!.assumingMemoryBound(to: Int8.self)
+            croaring.roaring_bitmap_serialize(self.ptr, ptr)
+        }
+        try container.encode(data.base64EncodedString())
     }
 
     ///
@@ -714,8 +719,12 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     public init(from decoder: Decoder) throws {
         var container = try decoder.unkeyedContainer()
-        let buffer = try container.decode([Int8].self)
-        self.ptr = croaring.roaring_bitmap_deserialize(buffer)!
+
+        let buffer = try container.decode(String.self)
+        let data = Data(base64Encoded: buffer)
+        self.ptr = data!.withUnsafeBytes {
+            croaring.roaring_bitmap_deserialize($0)!
+        }
     }
 
     ///
