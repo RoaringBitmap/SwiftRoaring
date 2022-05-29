@@ -11,7 +11,7 @@ extension swiftRoaringTests {
         ("testAnd", testAnd),
         ("testAndNot", testAndNot),
         ("testBase64", testBase64),
-        ("testClear", testClear),
+        ("testRemoveAll", testRemoveAll),
         ("testDescription", testDescription),
         ("testEquals", testEquals),
         ("testFlip", testFlip),
