@@ -42,6 +42,14 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         self.ptr = croaring.roaring_bitmap_from_range(min, max, step)!
     }
 
+    public init(range: Range<UInt64>, step: UInt32) {
+        self.ptr = croaring.roaring_bitmap_from_range(
+            range.lowerBound,
+            range.upperBound,
+            step
+        )!
+    }
+
     ///
     /// Creates a new bitmap (initially empty) with a provided
     /// container-storage capacity (it is a performance hint).
@@ -406,6 +414,15 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         return Self(ptr: croaring.roaring_bitmap_flip(self.ptr, rangeStart, rangeEnd))
     }
 
+    @inlinable @inline(__always)
+    public func flip(_ range: Range<UInt64>) -> Self {
+        Self(ptr: croaring.roaring_bitmap_flip(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        ))
+    }
+
     ///
     /// compute (in place) the negation of the roaring bitmap within a specified
     /// interval: [range_start, range_end). The number of negated values is
@@ -415,6 +432,15 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     @inlinable @inline(__always)
     public func flipInplace(rangeStart: UInt64, rangeEnd: UInt64) {
         croaring.roaring_bitmap_flip_inplace(self.ptr, rangeStart, rangeEnd)
+    }
+
+    @inlinable @inline(__always)
+    public func flipInPlace(_ range: Range<UInt64>) {
+        croaring.roaring_bitmap_flip_inplace(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -477,12 +503,30 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         croaring.roaring_bitmap_add_range_closed(self.ptr, min, max)
     }
 
+    @inlinable @inline(__always)
+    public func add(_ range: ClosedRange<UInt32>) {
+        croaring.roaring_bitmap_add_range_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
     ///
     /// Add all values in range [min, max)
     ///
     @inlinable @inline(__always)
     public func addRange(min: UInt64, max: UInt64) {
         croaring.roaring_bitmap_add_range(self.ptr, min, max)
+    }
+
+    @inlinable @inline(__always)
+    public func add(_ range: Range<UInt64>) {
+        croaring.roaring_bitmap_add_range(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
     }
 
     @inlinable @inline(__always)
@@ -496,7 +540,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
 
     @inlinable @inline(__always)
     public func update(with newMember: UInt32) -> UInt32? {
-        let (inserted, _ ) = self.insert(newMember)
+        let (inserted, _) = self.insert(newMember)
         if inserted {
             return nil
         } else {
@@ -563,6 +607,20 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         croaring.roaring_bitmap_clear(self.ptr)
     }
 
+    @inlinable @inline(__always)
+    public func removeAll() {
+        self.clear()
+    }
+
+    @inlinable @inline(__always)
+    public func removeAll(
+           where shouldBeRemoved: (UInt32) -> Bool
+       ) {
+           for i in self where shouldBeRemoved(i) {
+               self.remove(i)
+           }
+       }
+
     ///
     /// Get the cardinality of the bitmap (number of elements).
     ///
@@ -585,6 +643,15 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     @inlinable @inline(__always)
     public func containsRange(start: UInt64, end: UInt64) -> Bool {
         return croaring.roaring_bitmap_contains_range(self.ptr, start, end)
+    }
+
+    @inlinable @inline(__always)
+    public func contains(_ range: Range<UInt64>) -> Bool {
+        return croaring.roaring_bitmap_contains_range(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
     }
     ///
     /// Check whether the bitmap is empty

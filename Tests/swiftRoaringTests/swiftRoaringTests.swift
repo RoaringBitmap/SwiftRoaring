@@ -6,7 +6,7 @@ extension swiftRoaringTests {
         return [
             ("testAdd", testAdd),
             ("testRemove", testRemove),
-            ("testClear", testClear),
+            ("testRemoveAll", testRemoveAll),
             ("testIterator", testIterator),
             ("testInitRange", testInitRange),
             ("testInitArray", testInitArray),
@@ -54,18 +54,25 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertEqual(rbm.contains(35), false)
     }
 
-    func testClear() {
-        for k in stride(from: 0, to: 10000, by: 100 ) {
+    func testRemoveAll() {
+        for k in stride(from: 0, to: 10000, by: 100) {
             rbm.add(UInt32(k))
         }
         XCTAssertEqual(rbm.isEmpty, false)
-        rbm.clear()
+        rbm.removeAll()
         XCTAssertEqual(rbm.isEmpty, true)
+    }
+
+    func testRemoveAllWhere() {
+        let a = RoaringBitmap(range: 0..<100, step: 1)
+        a.removeAll { $0 % 2 == 0 }
+
+        XCTAssert(a.elementsEqual(stride(from: 1, through: 100, by: 2)))
     }
 
     func testIterator() {
         var count = 0
-        for k in stride(from: 0, to: 10000, by: 100 ) {
+        for k in stride(from: 0, to: 10000, by: 100) {
             rbm.add(UInt32(k))
             count += 1
         }
@@ -79,7 +86,7 @@ class swiftRoaringTests: XCTestCase {
 
     func testInitRange() {
         let rbmRange = RoaringBitmap(min: 0, max: 1000, step: 50)
-        for k in stride(from: 0, to: 1000, by: 50 ) {
+        for k in stride(from: 0, to: 1000, by: 50) {
             XCTAssertEqual(rbmRange.contains(UInt32(k)), true)
         }
     }
@@ -99,6 +106,13 @@ class swiftRoaringTests: XCTestCase {
         for i in array {
             XCTAssertEqual(l.contains(UInt32(i)), true)
         }
+    }
+
+    func testRangeInit() {
+        let a = RoaringBitmap(min: 0, max: 100, step: 2)
+        let b = RoaringBitmap(range: 0..<100, step: 2)
+
+        XCTAssert(a.elementsEqual(b))
     }
 
     func testFlip() {
@@ -346,6 +360,9 @@ class swiftRoaringTests: XCTestCase {
         let s = String(data: a, encoding: .utf8)!
         print(s.count)
         let b = try! dec.decode(RoaringBitmap.self, from: a)
+        let expected = "[\"AjowAAABAAAAAAAxABAAAAAAAAIABAAGAAgACgAMAA4AEAASABQAFgAYABoAHAAeACAAIgAkACYAKAAqACwALgAwADIANAA2ADgAOgA8AD4AQABCAEQARgBIAEoATABOAFAAUgBUAFYAWABaAFwAXgBgAGIA\"]"
+
+        XCTAssert(s == expected)
 
         XCTAssert(r == b)
     }
