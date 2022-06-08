@@ -1,40 +1,6 @@
 import XCTest
 @testable import SwiftRoaring
 
-extension swiftRoaringTests {
-    static var allTests: [(String, (swiftRoaringTests) -> () throws -> Void)] {
-        return [
-            ("testAdd", testAdd),
-            ("testRemove", testRemove),
-            ("testRemoveAll", testRemoveAll),
-            ("testIterator", testIterator),
-            ("testInitRange", testInitRange),
-            ("testInitArray", testInitArray),
-            ("testInitCapacity", testInitCapacity),
-            ("testSelect", testSelect),
-            ("testAddingRemoving", testAddingRemoving),
-            ("testToArray", testToArray),
-            ("testPrinting", testPrinting),
-            ("testOptimisations", testOptimisations),
-            ("testSubset", testSubset),
-            ("testEquals", testEquals),
-            ("testFlip", testFlip),
-            ("testAnd", testAnd),
-            ("testOr", testOr),
-            ("testXor", testXor),
-            ("testAndNot", testAndNot),
-            ("testSerialize", testSerialize),
-            ("testPortableSerialize", testPortableSerialize),
-            ("testStatistics", testStatistics),
-            ("testJaccardIndex", testJaccardIndex),
-            ("testDescription", testDescription),
-            ("testHashValue", testHashValue),
-            ("testBase64", testBase64)
-
-        ]
-    }
-}
-
 class swiftRoaringTests: XCTestCase {
     var rbm: RoaringBitmap!
 
@@ -381,7 +347,6 @@ class swiftRoaringTests: XCTestCase {
     func makeList(_ n: Int) -> [UInt32] {
         return (0..<n).map { _ in UInt32.random(in: 0 ..< 1000) }
     }
-
 
     func testFirst() {
         let a: RoaringBitmap = []

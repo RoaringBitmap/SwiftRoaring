@@ -895,26 +895,17 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
 
     ///
     /// Returns the smallest value in the set.
-    /// Returns UInt32.max if the set is empty.
+    /// Returns nil if the set is empty.
     ///
     @inlinable @inline(__always)
-    public func min() -> UInt32 {
+    public func min() -> UInt32? {
+        guard !self.isEmpty else { return nil }
         return croaring.roaring_bitmap_minimum(self.ptr)
-    }
-
-    ///
-    /// Returns the greatest value in the set.
-    /// Returns 0 if the set is empty.
-    ///
-    @inlinable @inline(__always)
-    public func max() -> UInt32 {
-        return croaring.roaring_bitmap_maximum(self.ptr)
     }
 
     @inlinable @inline(__always)
     public var first: UInt32? {
-        guard !self.isEmpty else { return nil }
-        return croaring.roaring_bitmap_minimum(self.ptr)
+        return self.min()
     }
 
     @inlinable @inline(__always)
@@ -924,10 +915,19 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         return first
     }
 
+    ///
+    /// Returns the greatest value in the set.
+    /// Returns nil if the set is empty.
+    ///
     @inlinable @inline(__always)
-    public var last: UInt32? {
+    public func max() -> UInt32? {
         guard !self.isEmpty else { return nil }
         return croaring.roaring_bitmap_maximum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public var last: UInt32? {
+        return self.max()
     }
 
     @inlinable @inline(__always)
