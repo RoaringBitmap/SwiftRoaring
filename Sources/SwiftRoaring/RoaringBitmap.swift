@@ -342,7 +342,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     @inlinable @inline(__always)
     public func isDisjoint(with other: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_and_cardinality(self.ptr, other.ptr) == 0
+        return !croaring.roaring_bitmap_intersect(self.ptr, other.ptr)
     }
 
     ///
