@@ -878,7 +878,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// roaring_bitmap_rank returns the number of integers that are smaller or equal
+    /// returns the number of integers that are smaller or equal
     /// to x.
     ///
     @inlinable @inline(__always)
@@ -887,8 +887,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// roaring_bitmap_smallest returns the smallest value in the set.
-    /// Returns UINT32_MAX if the set is empty.
+    /// returns the smallest value in the set.
+    /// Returns UInt32.max if the set is empty.
     ///
     @inlinable @inline(__always)
     public func min() -> UInt32 {
@@ -896,7 +896,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// roaring_bitmap_smallest returns the greatest value in the set.
+    /// returns the greatest value in the set.
     /// Returns 0 if the set is empty.
     ///
     @inlinable @inline(__always)
