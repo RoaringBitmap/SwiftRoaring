@@ -85,8 +85,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// responsible for memory management.
     ///
     @inlinable @inline(__always)
-    public func intersection(_ x: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_and(self.ptr, x.ptr))
+    public func intersection(_ other: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_and(self.ptr, other.ptr))
     }
     ///
     /// Computes the intersection between two bitmaps and returns new bitmap. The
@@ -102,8 +102,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Inplace version modifies x1, x1 == x2 is allowed
     ///
     @inlinable @inline(__always)
-    public func formIntersection(_ x: RoaringBitmap) {
-        croaring.roaring_bitmap_and_inplace(self.ptr, x.ptr)
+    public func formIntersection(_ other: RoaringBitmap) {
+        croaring.roaring_bitmap_and_inplace(self.ptr, other.ptr)
     }
     ///
     /// Inplace version modifies x1, x1 == x2 is allowed
@@ -117,16 +117,16 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the size of the intersection between two bitmaps.
     ///
     @inlinable @inline(__always)
-    public func intersectionCount(_ x: RoaringBitmap) -> UInt64 {
-        return croaring.roaring_bitmap_and_cardinality(self.ptr, x.ptr)
+    public func intersectionCount(_ other: RoaringBitmap) -> UInt64 {
+        return croaring.roaring_bitmap_and_cardinality(self.ptr, other.ptr)
     }
 
     ///
     /// Check whether two bitmaps intersect.
     ///
     @inlinable @inline(__always)
-    public func intersect(_ x: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_intersect(self.ptr, x.ptr)
+    public func intersect(_ other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_intersect(self.ptr, other.ptr)
     }
 
     ///
@@ -137,23 +137,23 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// The Jaccard index is undefined if both bitmaps are empty.
     ///
     @inlinable @inline(__always)
-    public func jaccardIndex(_ x: RoaringBitmap) -> Double {
-        return croaring.roaring_bitmap_jaccard_index(self.ptr, x.ptr)
+    public func jaccardIndex(_ other: RoaringBitmap) -> Double {
+        return croaring.roaring_bitmap_jaccard_index(self.ptr, other.ptr)
     }
 
     ///
     /// Computes the size of the union between two bitmaps.
     ///
-    public func unionCount(_ x: RoaringBitmap) -> UInt64 {
-        return croaring.roaring_bitmap_or_cardinality(self.ptr, x.ptr)
+    public func unionCount(_ other: RoaringBitmap) -> UInt64 {
+        return croaring.roaring_bitmap_or_cardinality(self.ptr, other.ptr)
     }
 
     ///
     /// Computes the size of the difference (andnot) between two bitmaps.
     ///
     @inlinable @inline(__always)
-    public func subtractingCount(_ x: RoaringBitmap) -> UInt64 {
-        return croaring.roaring_bitmap_andnot_cardinality(self.ptr, x.ptr)
+    public func subtractingCount(_ other: RoaringBitmap) -> UInt64 {
+        return croaring.roaring_bitmap_andnot_cardinality(self.ptr, other.ptr)
     }
 
     ///
@@ -168,8 +168,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Computes the size of the symmetric difference (andnot) between two bitmaps.
     ///
     @inlinable @inline(__always)
-    public func symmetricDifferenceCount(_ x: RoaringBitmap) -> UInt64 {
-        return croaring.roaring_bitmap_xor_cardinality(self.ptr, x.ptr)
+    public func symmetricDifferenceCount(_ other: RoaringBitmap) -> UInt64 {
+        return croaring.roaring_bitmap_xor_cardinality(self.ptr, other.ptr)
     }
 
     ///
@@ -177,8 +177,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// responsible for memory management.
     ///
     @inlinable @inline(__always)
-    public func union(_ x: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_or(self.ptr, x.ptr))
+    public func union(_ other: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_or(self.ptr, other.ptr))
     }
     ///
     /// Computes the union between two bitmaps and returns new bitmap. The caller is
@@ -193,8 +193,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Inplace version of roaring_bitmap_or, modifies x1.
     ///
     @inlinable @inline(__always)
-    public func formUnion(_ x: RoaringBitmap) {
-        croaring.roaring_bitmap_or_inplace(self.ptr, x.ptr)
+    public func formUnion(_ other: RoaringBitmap) {
+        croaring.roaring_bitmap_or_inplace(self.ptr, other.ptr)
     }
     ///
     /// Inplace version of `roaring_bitmap_or, modifies` x1.
@@ -236,8 +236,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
     @inlinable @inline(__always)
-    public func symmetricDifference(_ x: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_xor(self.ptr, x.ptr))
+    public func symmetricDifference(_ other: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_xor(self.ptr, other.ptr))
     }
     ///
     /// Computes the symmetric difference (xor) between two bitmaps
@@ -252,8 +252,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Inplace version of roaring_bitmap_xor, modifies x1. x1 != x2.
     ///
     @inlinable @inline(__always)
-    public func formSymmetricDifference(_ x: RoaringBitmap) {
-        croaring.roaring_bitmap_xor_inplace(self.ptr, x.ptr)
+    public func formSymmetricDifference(_ other: RoaringBitmap) {
+        croaring.roaring_bitmap_xor_inplace(self.ptr, other.ptr)
     }
     ///
     /// Inplace version of roaring_bitmap_xor, modifies x1. x1 != x2.
@@ -282,8 +282,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// and returns new bitmap. The caller is responsible for memory management.
     ///
     @inlinable @inline(__always)
-    public func subtracting(_ x: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_andnot(self.ptr, x.ptr))
+    public func subtracting(_ other: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_andnot(self.ptr, other.ptr))
     }
     ///
     /// Computes the  difference (andnot) between two bitmaps
@@ -298,8 +298,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Inplace version of roaring_bitmap_andnot, modifies x1. x1 != x2.
     ///
     @inlinable @inline(__always)
-    public func subtract(_ x: RoaringBitmap) {
-        croaring.roaring_bitmap_andnot_inplace(self.ptr, x.ptr)
+    public func subtract(_ other: RoaringBitmap) {
+        croaring.roaring_bitmap_andnot_inplace(self.ptr, other.ptr)
     }
     ///
     /// Inplace version of roaring_bitmap_andnot, modifies x1. x1 != x2.
@@ -324,18 +324,25 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Return true if all the elements of ra1 are also in ra2.
     ///
     @inlinable @inline(__always)
-    public func isSubset(of x: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_is_subset(self.ptr, x.ptr)
+    public func isSubset(of other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_is_subset(self.ptr, other.ptr)
     }
 
     ///
     /// Return true if all the elements of ra1 are also in ra2 and ra2 is strictly
-    /// greater
-    /// than ra1.
+    /// greater than ra1.
     ///
     @inlinable @inline(__always)
-    public func isStrictSubset(of x: RoaringBitmap) -> Bool {
-        return croaring.roaring_bitmap_is_strict_subset(self.ptr, x.ptr)
+    public func isStrictSubset(of other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_is_strict_subset(self.ptr, other.ptr)
+    }
+
+    ///
+    /// Return true if ra1 and ra2 have no elements in common.
+    ///
+    @inlinable @inline(__always)
+    public func isDisjoint(with other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_and_cardinality(self.ptr, other.ptr) == 0
     }
 
     ///
@@ -352,8 +359,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// whether container-container operations force a bitset conversion.
     ///
     @inlinable @inline(__always)
-    public func lazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, x.ptr, bitsetconversion))
+    public func lazyUnion(_ other: RoaringBitmap, bitsetconversion: Bool) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_lazy_or(self.ptr, other.ptr, bitsetconversion))
     }
 
     ///
@@ -363,8 +370,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// whether container-container operations force a bitset conversion.
     ///
     @inlinable @inline(__always)
-    public func formLazyUnion(_ x: RoaringBitmap, bitsetconversion: Bool) {
-        croaring.roaring_bitmap_lazy_or_inplace(self.ptr, x.ptr, bitsetconversion)
+    public func formLazyUnion(_ other: RoaringBitmap, bitsetconversion: Bool) {
+        croaring.roaring_bitmap_lazy_or_inplace(self.ptr, other.ptr, bitsetconversion)
     }
 
     ///
@@ -390,8 +397,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// It is safe to repeatedly call roaring_bitmap_lazy_xor_inplace on the result.
     ///
     @inlinable @inline(__always)
-    public func lazySymmetricDifference(_ x: RoaringBitmap) -> Self {
-        return Self(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, x.ptr))
+    public func lazySymmetricDifference(_ other: RoaringBitmap) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_lazy_xor(self.ptr, other.ptr))
     }
 
     ///
@@ -399,8 +406,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Inplace version of roaring_bitmap_lazy_xor, modifies x1. x1 != x2
     ///
     @inlinable @inline(__always)
-    public func formLazySymmetricDifference(_ x: RoaringBitmap) {
-        croaring.roaring_bitmap_lazy_xor_inplace(self.ptr, x.ptr)
+    public func formLazySymmetricDifference(_ other: RoaringBitmap) {
+        croaring.roaring_bitmap_lazy_xor_inplace(self.ptr, other.ptr)
     }
 
     ///
@@ -902,6 +909,32 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     @inlinable @inline(__always)
     public func max() -> UInt32 {
         return croaring.roaring_bitmap_maximum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public var first: UInt32? {
+        guard !self.isEmpty else { return nil }
+        return croaring.roaring_bitmap_minimum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public func dropFirst() -> UInt32? {
+        guard let first = self.first else { return nil }
+        self.remove(first)
+        return first
+    }
+
+    @inlinable @inline(__always)
+    public var last: UInt32? {
+        guard !self.isEmpty else { return nil }
+        return croaring.roaring_bitmap_maximum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public func dropLast() -> UInt32? {
+        guard let last = self.last else { return nil }
+        self.remove(last)
+        return last
     }
 
     ///
