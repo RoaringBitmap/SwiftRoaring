@@ -878,7 +878,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// returns the number of integers that are smaller or equal
+    /// Returns the number of integers that are smaller or equal
     /// to x.
     ///
     @inlinable @inline(__always)
@@ -887,7 +887,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// returns the smallest value in the set.
+    /// Returns the smallest value in the set.
     /// Returns UInt32.max if the set is empty.
     ///
     @inlinable @inline(__always)
@@ -896,7 +896,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// returns the greatest value in the set.
+    /// Returns the greatest value in the set.
     /// Returns 0 if the set is empty.
     ///
     @inlinable @inline(__always)
@@ -923,7 +923,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// code used to iterate through values in a roaring bitmap
+    /// Structure used to iterate through values in a roaring bitmap
     ///
     public struct RoaringBitmapIterator: IteratorProtocol {
         private var i: UnsafeMutablePointer<roaring_uint32_iterator_t>
@@ -941,7 +941,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// returns a string representation of the bitset
+    /// Returns a string representation of the bitset
     ///
     public var description: String {
         var ret = prefix(100).map { $0.description }.joined(separator: ", ")
@@ -952,7 +952,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// hash value for the bitset, this is expensive and should be buffered
+    /// returns a hash value for the bitset, this is expensive and should be buffered
     /// for performance
     ///
     public var hashValue: Int {
