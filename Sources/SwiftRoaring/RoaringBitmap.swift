@@ -904,6 +904,32 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         return croaring.roaring_bitmap_maximum(self.ptr)
     }
 
+    @inlinable @inline(__always)
+    public var first: UInt32? {
+        guard !self.isEmpty else { return nil }
+        return croaring.roaring_bitmap_minimum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public func dropFirst() -> UInt32? {
+        guard let first = self.first else { return nil }
+        self.remove(first)
+        return first
+    }
+
+    @inlinable @inline(__always)
+    public var last: UInt32? {
+        guard !self.isEmpty else { return nil }
+        return croaring.roaring_bitmap_maximum(self.ptr)
+    }
+
+    @inlinable @inline(__always)
+    public func dropLast() -> UInt32? {
+        guard let last = self.last else { return nil }
+        self.remove(last)
+        return last
+    }
+
     ///
     /// (For advanced users.)
     /// Collect statistics about the bitmap, see RoaringStatistics.swift for

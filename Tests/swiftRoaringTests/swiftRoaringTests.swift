@@ -353,7 +353,7 @@ class swiftRoaringTests: XCTestCase {
         let enc = JSONEncoder()
         let dec = JSONDecoder()
 
-        var r = RoaringBitmap(min: 0, max: 100, step: 2)
+        let r = RoaringBitmap(min: 0, max: 100, step: 2)
 
         let a = try! enc.encode(r)
 
@@ -380,5 +380,35 @@ class swiftRoaringTests: XCTestCase {
 
     func makeList(_ n: Int) -> [UInt32] {
         return (0..<n).map { _ in UInt32.random(in: 0 ..< 1000) }
+    }
+
+
+    func testFirst() {
+        let a: RoaringBitmap = []
+        XCTAssert(a.first == nil)
+
+        let b: RoaringBitmap = [1, 2, 3]
+
+        XCTAssert(b.first == 1)
+        XCTAssert(b.dropFirst() == 1)
+        XCTAssert(b.dropFirst() == 2)
+        XCTAssert(b.dropFirst() == 3)
+        XCTAssert(b.dropFirst() == nil)
+        XCTAssert(b.first == nil)
+        XCTAssert(b.isEmpty)
+    }
+
+    func testLast() {
+        let a: RoaringBitmap = []
+        XCTAssert(a.last == nil)
+
+        let b: RoaringBitmap = [1, 2, 3]
+        XCTAssert(b.last == 3)
+        XCTAssert(b.dropLast() == 3)
+        XCTAssert(b.dropLast() == 2)
+        XCTAssert(b.dropLast() == 1)
+        XCTAssert(b.dropLast() == nil)
+        XCTAssert(b.last == nil)
+        XCTAssert(b.isEmpty)
     }
 }
