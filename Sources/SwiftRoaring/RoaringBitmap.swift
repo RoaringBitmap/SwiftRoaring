@@ -330,12 +330,19 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
 
     ///
     /// Return true if all the elements of ra1 are also in ra2 and ra2 is strictly
-    /// greater
-    /// than ra1.
+    /// greater than ra1.
     ///
     @inlinable @inline(__always)
     public func isStrictSubset(of x: RoaringBitmap) -> Bool {
         return croaring.roaring_bitmap_is_strict_subset(self.ptr, x.ptr)
+    }
+
+    ///
+    /// Return true if ra1 and ra2 have no elements in common.
+    ///
+    @inlinable @inline(__always)
+    public func isDisjoint(with other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_and_cardinality(self.ptr, other.ptr) == 0
     }
 
     ///
