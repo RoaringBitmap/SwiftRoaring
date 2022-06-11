@@ -537,6 +537,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     @inlinable @inline(__always)
+    @discardableResult
     public func insert(_ newMember: UInt32) -> (inserted: Bool, memberAfterInsert: UInt32) {
         let contains = self.contains(newMember)
         if !contains {
@@ -546,6 +547,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     @inlinable @inline(__always)
+    @discardableResult
     public func update(with newMember: UInt32) -> UInt32? {
         let (inserted, _) = self.insert(newMember)
         if inserted {
