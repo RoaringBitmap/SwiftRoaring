@@ -16603,12 +16603,6 @@ roaring_uint32_iterator_t *roaring_create_iterator(const roaring_bitmap_t *r) {
     return newit;
 }
 
-roaring_uint32_iterator_t roaring_create_iterator_value(const roaring_bitmap_t *r) {
-    roaring_uint32_iterator_t newit;
-    roaring_init_iterator(r, &newit);
-    return newit;
-}
-
 roaring_uint32_iterator_t *roaring_copy_uint32_iterator(
     const roaring_uint32_iterator_t *it) {
     roaring_uint32_iterator_t *newit =

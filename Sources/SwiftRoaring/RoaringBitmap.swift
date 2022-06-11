@@ -967,7 +967,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
 
         @inlinable @inline(__always)
         init(ptr: UnsafePointer<roaring_bitmap_t>) {
-            self.i = croaring.roaring_create_iterator_value(ptr)
+            self.i = roaring_uint32_iterator_t()
+            roaring_init_iterator(ptr, &self.i)
         }
 
         @inlinable @inline(__always)
