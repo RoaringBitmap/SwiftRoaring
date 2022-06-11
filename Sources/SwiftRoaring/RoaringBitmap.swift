@@ -953,6 +953,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Creates a RoaringBitmapIterator.
     ///
+    @inlinable @inline(__always)
     public func makeIterator() -> RoaringBitmapIterator {
         return RoaringBitmapIterator(ptr: self.ptr)
     }
@@ -960,24 +961,21 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Structure used to iterate through values in a roaring bitmap
     ///
-    public final class RoaringBitmapIterator: IteratorProtocol {
+    public struct RoaringBitmapIterator: IteratorProtocol {
         @usableFromInline
-        internal var i: UnsafeMutablePointer<roaring_uint32_iterator_t>
+        internal var i: roaring_uint32_iterator_t
 
-        init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
-            self.i = croaring.roaring_create_iterator(ptr)
+        @inlinable @inline(__always)
+        init(ptr: UnsafePointer<roaring_bitmap_t>) {
+            self.i = croaring.roaring_create_iterator_value(ptr)
         }
 
         @inlinable @inline(__always)
-        public func next() -> UInt32? {
-            guard i.pointee.has_value else { return nil }
-            let val = i.pointee.current_value
-            croaring.roaring_advance_uint32_iterator(self.i)
+        public mutating func next() -> UInt32? {
+            guard i.has_value else { return nil }
+            let val = i.current_value
+            croaring.roaring_advance_uint32_iterator(&self.i)
             return val
-        }
-
-        deinit {
-            croaring.roaring_free_uint32_iterator(self.i)
         }
     }
 
