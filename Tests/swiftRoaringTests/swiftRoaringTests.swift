@@ -11,22 +11,28 @@ class swiftRoaringTests: XCTestCase {
 
     func testAdd() {
         rbm.add(35)
-        XCTAssertEqual(rbm.contains(35), true)
+        XCTAssertTrue(rbm.contains(35))
     }
 
     func testRemove() {
         rbm.add(35)
-        rbm.remove(35)
-        XCTAssertEqual(rbm.contains(35), false)
+        XCTAssert(rbm.remove(35) == 35)
+        XCTAssertFalse(rbm.contains(35))
+    }
+
+    func testUpdate() {
+        rbm.add(35)
+        XCTAssert(rbm.update(with: 35) == 35)
+        XCTAssertTrue(rbm.contains(35))
     }
 
     func testRemoveAll() {
         for k in stride(from: 0, to: 10000, by: 100) {
             rbm.add(UInt32(k))
         }
-        XCTAssertEqual(rbm.isEmpty, false)
+        XCTAssertFalse(rbm.isEmpty)
         rbm.removeAll()
-        XCTAssertEqual(rbm.isEmpty, true)
+        XCTAssertTrue(rbm.isEmpty)
     }
 
     func testRemoveAllWhere() {
@@ -43,9 +49,9 @@ class swiftRoaringTests: XCTestCase {
             count += 1
         }
         for i in rbm {
-            XCTAssertEqual(rbm.contains(i), true)
+            XCTAssertTrue(rbm.contains(i))
             count -= 1
-            if count < 0 {break}
+            if count < 0 { break }
         }
         XCTAssertEqual(count, 0)
     }
@@ -53,7 +59,7 @@ class swiftRoaringTests: XCTestCase {
     func testInitRange() {
         let rbmRange = RoaringBitmap(min: 0, max: 1000, step: 50)
         for k in stride(from: 0, to: 1000, by: 50) {
-            XCTAssertEqual(rbmRange.contains(UInt32(k)), true)
+            XCTAssertTrue(rbmRange.contains(UInt32(k)))
         }
     }
 
@@ -66,11 +72,11 @@ class swiftRoaringTests: XCTestCase {
         let array = [0, 1, 2, 4, 5, 6]
         let rbmArray = RoaringBitmap(values: array.map { UInt32($0) })
         for i in array {
-            XCTAssertEqual(rbmArray.contains(UInt32(i)), true)
+            XCTAssertTrue(rbmArray.contains(UInt32(i)))
         }
         let l: RoaringBitmap = [0, 1, 2, 4, 5, 6]
         for i in array {
-            XCTAssertEqual(l.contains(UInt32(i)), true)
+            XCTAssertTrue(l.contains(UInt32(i)))
         }
     }
 

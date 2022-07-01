@@ -543,8 +543,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     @inlinable @inline(__always)
     @discardableResult
     public func remove(_ value: UInt32) -> UInt32? {
-        guard self.removeCheck(value) else { return value }
-        return nil
+        guard self.removeCheck(value) else { return nil }
+        return value
     }
 
     ///
@@ -740,7 +740,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// use with roaring_bitmap_serialize
+    /// use with `roaring_bitmap_serialize`
     /// see `roaring_bitmap_portable_deserialize` if you want a format that's
     /// compatible with Java and Go implementations
     ///
@@ -962,7 +962,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         if self.count >= 100 {
             ret.append(", ...")
         }
-        return "{\(ret)}"
+        return "RoaringBitmap(\(ret))"
     }
 
     ///
