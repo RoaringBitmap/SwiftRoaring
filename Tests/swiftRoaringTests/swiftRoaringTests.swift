@@ -384,10 +384,10 @@ class swiftRoaringTests: XCTestCase {
     }
 
     func testIsDisjoint() {
-        let a: RoaringBitmap = [1,2,3,4,5]
-        let b: RoaringBitmap = [6,7,8,9,10]
+        let a: RoaringBitmap = [1, 2, 3, 4, 5]
+        let b: RoaringBitmap = [6, 7, 8, 9, 10]
 
-        let c: RoaringBitmap = [5,6,7,8]
+        let c: RoaringBitmap = [5, 6, 7, 8]
 
         XCTAssert(a.isDisjoint(with: b))
         XCTAssert(!a.isDisjoint(with: c))
