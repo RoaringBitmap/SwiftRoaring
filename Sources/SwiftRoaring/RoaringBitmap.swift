@@ -884,7 +884,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     @inlinable @inline(__always)
-    public func dropFirst() -> UInt32? {
+    public func popFirst() -> UInt32? {
         guard let first = self.first else { return nil }
         self.remove(first)
         return first
@@ -906,7 +906,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     @inlinable @inline(__always)
-    public func dropLast() -> UInt32? {
+    public func popLast() -> UInt32? {
         guard let last = self.last else { return nil }
         self.remove(last)
         return last
