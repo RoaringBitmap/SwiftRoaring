@@ -361,10 +361,10 @@ class swiftRoaringTests: XCTestCase {
         let b: RoaringBitmap = [1, 2, 3]
 
         XCTAssert(b.first == 1)
-        XCTAssert(b.dropFirst() == 1)
-        XCTAssert(b.dropFirst() == 2)
-        XCTAssert(b.dropFirst() == 3)
-        XCTAssert(b.dropFirst() == nil)
+        XCTAssert(b.popFirst() == 1)
+        XCTAssert(b.popFirst() == 2)
+        XCTAssert(b.popFirst() == 3)
+        XCTAssert(b.popFirst() == nil)
         XCTAssert(b.first == nil)
         XCTAssert(b.isEmpty)
     }
@@ -375,10 +375,10 @@ class swiftRoaringTests: XCTestCase {
 
         let b: RoaringBitmap = [1, 2, 3]
         XCTAssert(b.last == 3)
-        XCTAssert(b.dropLast() == 3)
-        XCTAssert(b.dropLast() == 2)
-        XCTAssert(b.dropLast() == 1)
-        XCTAssert(b.dropLast() == nil)
+        XCTAssert(b.popLast() == 3)
+        XCTAssert(b.popLast() == 2)
+        XCTAssert(b.popLast() == 1)
+        XCTAssert(b.popLast() == nil)
         XCTAssert(b.last == nil)
         XCTAssert(b.isEmpty)
     }
