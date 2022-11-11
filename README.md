@@ -100,23 +100,31 @@ for i in bitmap {
 
 You can build using Swift Package Manager as follows:
 
-```bash    
+```bash
 swift build  --configuration release
-$(swift build   --configuration release  --show-bin-path)/fun
 ```
+To find where the library is built, type the following
+in your shell:
+```bash
+ echo $(swift build   --configuration release  --show-bin-path)
+```
+
 You can run tests using Swift Package Manager as follows:
-```bash    
+```bash
 swift test
 ```
 
 ### Interactive use
 
 ```
-$ swift build  -Xcc -march=native  --configuration release
-$ swift -I .build/release -L .build/release -lSwiftRoaringDynamic
+$ swift build  --configuration release
+$ swift repl -I .build/release -L .build/release -lSwiftRoaringDynamic
   1> import SwiftRoaring
   2> let bitmap = RoaringBitmap()
   3> bitmap.add(1)
+  4> for i in bitmap {
+       print(i)
+     }
 ```
 
 ### Mailing list/discussion group
