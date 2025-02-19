@@ -942,14 +942,14 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         @inlinable @inline(__always)
         init(ptr: UnsafePointer<roaring_bitmap_t>) {
             self.i = roaring_uint32_iterator_t()
-            roaring_init_iterator(ptr, &self.i)
+            roaring_iterator_init(ptr, &self.i)
         }
 
         @inlinable @inline(__always)
         public mutating func next() -> UInt32? {
             guard i.has_value else { return nil }
             let val = i.current_value
-            croaring.roaring_advance_uint32_iterator(&self.i)
+            croaring.roaring_uint32_iterator_advance(&self.i)
             return val
         }
     }
