@@ -1,6 +1,7 @@
 name: Swift on Ubuntu (latest)
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
