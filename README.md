@@ -79,18 +79,24 @@ import SwiftRoaring
 let bitmap = RoaringBitmap()
 
 //Example: Add Range
-bitmap.addRange(min: 0, max: 500)
+bitmap.addRange(min: 0, max: 50)
 
 //Example: copy
 let cpy = bitmap.copy()
 
 //Example: Operators
-let and = bitmap && cpy
+let and = bitmap.union(cpy)
+
+let delta = and.subtracting(bitmap)
+print("copy, union, and subtract -> empty: \(delta.isEmpty)")
 
 //Example: Iterate
+var out = ""
 for i in bitmap {
-    print(i)
+    out += "\(i) "
 }
+print("0 ..< 50: \(out)")
+
 
 //See documentation for more functionalities!
 
