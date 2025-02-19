@@ -258,7 +258,50 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertEqual(rbm.serialize(buffer: &buffer), size)
         let deserializedRbm = RoaringBitmap.deserialize(buffer: buffer)
         XCTAssertTrue(deserializedRbm == rbm)
+    }
+    
+    func testIntersection() {
+        let (rbm1, rbm2, swiftSet1, swiftSet2) = makeSets()
+        let actual = rbm1.intersection(rbm2)
+        let swift = swiftSet1.intersection(swiftSet2)
+        XCTAssertEqual(swift, Set(actual.toArray()))
+    }
 
+    func testUnion() {
+        let (rbm1, rbm2, swiftSet1, swiftSet2) = makeSets()
+        let actual = rbm1.union(rbm2)
+        let swift = swiftSet1.union(swiftSet2)
+        XCTAssertEqual(swift, Set(actual.toArray()))
+    }
+
+    func testSymmetricDifference() {
+        let (rbm1, rbm2, swiftSet1, swiftSet2) = makeSets()
+        let actual = rbm1.symmetricDifference(rbm2)
+        let swift = swiftSet1.symmetricDifference(swiftSet2)
+        XCTAssertEqual(swift, Set(actual.toArray()))
+    }
+
+    func testSubtracting() {
+        let (rbm1, rbm2, swiftSet1, swiftSet2) = makeSets()
+        let actual = rbm1.subtracting(rbm2)
+        let swift = swiftSet1.subtracting(swiftSet2)
+        XCTAssertEqual(swift, Set(actual.toArray()))
+    }
+
+    /// Weak check just verifies hash changes
+    func testHash() {
+        let (rbm1, rbm2, _, _) = makeSets()
+        var peek1 = Hasher()
+        rbm1.hash(into: &peek1)
+        let result1 = peek1.finalize()
+        let add = rbm2.subtracting(rbm1)
+        guard !add.isEmpty else { return }
+        
+        let both = rbm1.union(add)
+        var peek2 = Hasher()
+        both.hash(into: &peek2)
+        let result2 = peek2.finalize()
+        XCTAssertTrue(result1 != result2)
     }
 
     func testPortableSerialize() {
@@ -303,6 +346,14 @@ class swiftRoaringTests: XCTestCase {
         XCTAssertTrue(stats.max_value == 500)
         XCTAssertTrue(stats.min_value == 0)
         XCTAssertTrue(stats.cardinality == 501)
+    }
+
+    func testCardinality() {
+        rbm.addRangeClosed(min: 0, max: 500)
+        let result = rbm.rangeCardinality(min: 0, max: 500)  // 0 ..< 500
+        XCTAssertEqual(500, result)
+        let result2 = rbm.rangeCardinality(min: 0, max: 501) // 0 ..< 501
+        XCTAssertEqual(501, result2)
     }
 
     func testJaccardIndex() {
