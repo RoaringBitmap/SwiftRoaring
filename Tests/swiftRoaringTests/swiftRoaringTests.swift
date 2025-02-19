@@ -120,8 +120,11 @@ class swiftRoaringTests: XCTestCase {
     func testPrinting() {
         let rbmap = RoaringBitmap()
         rbmap.add(1)
+        let label = "\n# RoaringBitmap [\(#file):\(#line) \(#function)]"
+        print("\(label) START")
         rbmap.describe()
         rbmap.print()
+        print("\(label) END")
     }
 
     func testToArray() {
@@ -364,7 +367,8 @@ class swiftRoaringTests: XCTestCase {
 
     func testDescription() {
         rbm.addRangeClosed(min: 0, max: 500)
-        print(rbm.description)
+        let description = rbm.description
+        XCTAssertTrue(description.contains("Bitmap(0, "))
     }
 
     func testHashValue() {
@@ -381,7 +385,6 @@ class swiftRoaringTests: XCTestCase {
         let a = try! enc.encode(r)
 
         let s = String(data: a, encoding: .utf8)!
-        print(s.count)
         let b = try! dec.decode(RoaringBitmap.self, from: a)
         let expected = "[\"AjowAAABAAAAAAAxABAAAAAAAAIABAAGAAgACgAMAA4AEAASABQAFgAYABoAHAAeACAAIgAkACYAKAAqACwALgAwADIANAA2ADgAOgA8AD4AQABCAEQARgBIAEoATABOAFAAUgBUAFYAWABaAFwAXgBgAGIA\"]"
 
