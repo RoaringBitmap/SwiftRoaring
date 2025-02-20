@@ -33,5 +33,4 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
-        on: pull_request
           
