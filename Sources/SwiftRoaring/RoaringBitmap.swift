@@ -753,7 +753,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Encodable conformance
     ///
     public func encode(to encoder: Encoder) throws {
-        var container = encoder.unkeyedContainer()
+        var container = encoder.singleValueContainer()
         let count = self.sizeInBytes()
         var data = Data(count: count)
 
@@ -768,7 +768,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// Decodable conformance
     ///
     public init(from decoder: Decoder) throws {
-        var container = try decoder.unkeyedContainer()
+        let container = try decoder.singleValueContainer()
 
         let buffer = try container.decode(String.self)
         let data = Data(base64Encoded: buffer)

@@ -332,7 +332,7 @@ class swiftRoaringTests: XCTestCase {
         let s = String(data: a, encoding: .utf8)!
         print(s.count)
         let b = try! dec.decode(RoaringBitmap.self, from: a)
-        let expected = "[\"AjowAAABAAAAAAAxABAAAAAAAAIABAAGAAgACgAMAA4AEAASABQAFgAYABoAHAAeACAAIgAkACYAKAAqACwALgAwADIANAA2ADgAOgA8AD4AQABCAEQARgBIAEoATABOAFAAUgBUAFYAWABaAFwAXgBgAGIA\"]"
+        let expected = "\"AjowAAABAAAAAAAxABAAAAAAAAIABAAGAAgACgAMAA4AEAASABQAFgAYABoAHAAeACAAIgAkACYAKAAqACwALgAwADIANAA2ADgAOgA8AD4AQABCAEQARgBIAEoATABOAFAAUgBUAFYAWABaAFwAXgBgAGIA\""
 
         XCTAssert(s == expected)
 
