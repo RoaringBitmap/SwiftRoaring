@@ -14,8 +14,7 @@ jobs:
     strategy:
       matrix:
         swift: ["5", "6"]
-        ubuntu: ["ubuntu-latest", "ubuntu-24.04", "ubuntu-22.04"]
-
+        ubuntu: [ "ubuntu-latest" ]
     name: SwiftPM build in Swift ${{ matrix.swift }} on ${{ matrix.ubuntu }}
     runs-on: ${{ matrix.ubuntu }}
     steps:
