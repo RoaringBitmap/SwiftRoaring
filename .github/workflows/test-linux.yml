@@ -15,11 +15,11 @@ jobs:
       matrix:
         swift: []
         ubuntu: []
-      include:
-        - swift: "5"
-          ubuntu: "ubuntu-22.04"
-        - swift: "6"
-          ubuntu: "ubuntu-latest"
+        include:
+          - swift: "5"
+            ubuntu: "ubuntu-22.04"
+          - swift: "6"
+            ubuntu: "ubuntu-latest"
 
     name: SwiftPM build in Swift ${{ matrix.swift }} on ${{ matrix.ubuntu }}
     runs-on: ${{ matrix.ubuntu }}
