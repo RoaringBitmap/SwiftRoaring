@@ -10,7 +10,7 @@ on:
       - master
 
 jobs:
-  tests:
+  tests-linux:
     strategy:
       matrix:
         swift: ["5", "6"]
@@ -33,4 +33,20 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
-          
+  tests-macOS:
+    strategy:
+      fail-fast: false
+      matrix:
+        swift: ["5", "6"]
+        destination: [macOS]
+
+    name: SwiftPM macOS
+    runs-on: macOS-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Build
+        run: swift build
+      - name: Test
+        run: swift test
+        
