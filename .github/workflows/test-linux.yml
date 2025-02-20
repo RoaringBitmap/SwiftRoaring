@@ -1,4 +1,4 @@
-name: Swift on Ubuntu (latest)
+name: Swift on Ubuntu
 
 on:
   workflow_dispatch:
@@ -14,10 +14,13 @@ jobs:
     strategy:
       matrix:
         swift: ["5", "6"]
+        ubuntu: ["ubuntu-latest", "ubuntu-24.04", "ubuntu-22.04"]
 
-    name: SwiftPM Linux
-    runs-on: ubuntu-22.04
+    name: SwiftPM build in Swift ${{ matrix.swift }} on ${{ matrix.ubuntu }}
+    runs-on: ${{ matrix.ubuntu }}
     steps:
+      - name: Log versions
+        run: echo "Target Swift ${{ matrix.swift }} on ${{ matrix.ubuntu }}"
       - name: Setup Swift version
         uses: swift-actions/setup-swift@v2
         with:
@@ -26,6 +29,7 @@ jobs:
         uses: actions/checkout@v4
       - name: linuxmain
         run: |
+          echo "::notice title=Build Environment::Running on ${{ matrix.os }}"
           swift --version
           swift build
           swift test
@@ -50,4 +54,3 @@ jobs:
         run: swift build
       - name: Test
         run: swift test
-        
