@@ -12,8 +12,8 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: fwal/setup-swift@v1
+      - uses: actions/checkout@v4
+      - uses: fwal/setup-swift@v2
       - name: linuxmain
         run: swift test
       - name: Build
