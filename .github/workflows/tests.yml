@@ -17,6 +17,6 @@ jobs:
       - name: linuxmain
         run: swift test
       - name: Build
-        run: swift build; swift build
+        run: swift build
       - name: Test
         run: swift test
