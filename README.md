@@ -129,7 +129,7 @@ $ swift repl -I .build/release -L .build/release -lSwiftRoaringDynamic
 
 ### Mailing list/discussion group
 
-https://groups.google.com/forum/#!forum/roaring-bitmaps
+https://groups.google.com/g/roaring-bitmaps
 
 ### Compatibility with Java RoaringBitmap library
 
