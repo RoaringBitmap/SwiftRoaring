@@ -160,7 +160,8 @@ class swiftRoaringTests: XCTestCase {
 
     func testSelect() {
         rbm.addRangeClosed(min: 0, max: 500)
-        XCTAssertTrue(rbm.select(rank: 5, value: 800))
+        XCTAssertEqual(rbm.select(rank: 5), 5)
+        XCTAssertNil(rbm.select(rank: 501))
         XCTAssertEqual(rbm.rank(value: 800), 501)
     }
 
