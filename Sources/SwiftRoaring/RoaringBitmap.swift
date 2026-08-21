@@ -928,7 +928,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     @inlinable @inline(__always)
     public func makeIterator() -> RoaringBitmapIterator {
-        return RoaringBitmapIterator(ptr: self.ptr)
+        return RoaringBitmapIterator(bitmap: self)
     }
 
     ///
@@ -939,10 +939,14 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         @usableFromInline
         internal var i: roaring_uint32_iterator_t
 
+        @usableFromInline
+        internal let bitmap: RoaringBitmap
+
         @inlinable @inline(__always)
-        init(ptr: UnsafePointer<roaring_bitmap_t>) {
+        init(bitmap: RoaringBitmap) {
             self.i = roaring_uint32_iterator_t()
-            roaring_iterator_init(ptr, &self.i)
+            roaring_iterator_init(bitmap.ptr, &self.i)
+            self.bitmap = bitmap
         }
 
         @inlinable @inline(__always)
