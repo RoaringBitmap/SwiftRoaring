@@ -119,20 +119,6 @@ let common = bitmap & other
 let widened = Roaring64Bitmap(RoaringBitmap([1, 2, 3]))
 ```
 
-### API coverage
-
-SwiftRoaring wraps the whole public C API of CRoaring, both the 32-bit
-(`roaring_bitmap_*`) and the 64-bit (`roaring64_bitmap_*`) families: bulk
-contexts, copy-on-write, offsets, closed ranges, `rank_many`, forward and
-backward iterators with range reads, portable and frozen serialization,
-statistics and validation. A handful of C entry points have no Swift
-counterpart because they exist to serve C's memory model: the
-`roaring_bitmap_init*` family (which initializes a bitmap the caller
-allocated), the heap-allocated 32-bit iterator functions (SwiftRoaring's
-iterator is an allocation-free value type), and the variadic
-`roaring_bitmap_from`/`roaring64_bitmap_from` macros (use `init(values:)` or an
-array literal).
-
 ### Development
 
 You can build using Swift Package Manager as follows:
