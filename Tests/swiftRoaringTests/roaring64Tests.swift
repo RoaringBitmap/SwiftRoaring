@@ -358,6 +358,23 @@ class roaring64Tests: XCTestCase {
         XCTAssertEqual(view.toArray(), rbm.toArray())
     }
 
+    func testPortableDeserializeFrozen() {
+        rbm.addMany(values: spread)
+        rbm.add(1_000...2_000)
+        _ = rbm.runOptimize()
+
+        let bytes = rbm.portableSerialize()
+        guard let view = Roaring64Bitmap.portableDeserializeFrozen(bytes: bytes) else {
+            return XCTFail("frozen bitmap could not be read")
+        }
+        XCTAssertNil(view.internalValidate())
+        XCTAssertEqual(view, rbm)
+        XCTAssertEqual(view.toArray(), rbm.toArray())
+
+        // Truncated input is rejected rather than over-read.
+        XCTAssertNil(Roaring64Bitmap.portableDeserializeFrozen(bytes: Array(bytes.prefix(3))))
+    }
+
     func testEmptyBitmapRoundTrips() {
         let empty = Roaring64Bitmap()
         _ = empty.shrink()
@@ -369,6 +386,10 @@ class roaring64Tests: XCTestCase {
 
         XCTAssertEqual(
             Roaring64Bitmap.portableDeserializeSafe(bytes: empty.portableSerialize())?.isEmpty,
+            true
+        )
+        XCTAssertEqual(
+            Roaring64Bitmap.portableDeserializeFrozen(bytes: empty.portableSerialize())?.isEmpty,
             true
         )
         XCTAssertEqual(empty.toArray(), [])

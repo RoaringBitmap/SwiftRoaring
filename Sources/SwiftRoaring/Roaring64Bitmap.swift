@@ -1287,6 +1287,44 @@ extension Roaring64Bitmap {
     /// bitmap. The result must only be read, never modified.
     ///
     public static func frozenView(bytes: [UInt8]) -> Self? {
+        return withOwnedAlignedCopy(of: bytes) { buffer in
+            croaring.roaring64_bitmap_frozen_view(
+                buffer.assumingMemoryBound(to: CChar.self),
+                bytes.count
+            )
+        }
+    }
+
+    ///
+    /// Reads a bitmap serialized by `portableSerialize()` without copying the
+    /// container payloads out of the buffer, which is faster than
+    /// `portableDeserializeSafe(bytes:)` but yields a read-only bitmap. Returns
+    /// nil if the bytes do not hold a valid bitmap, and on big-endian machines,
+    /// where the payloads cannot be used where they sit.
+    ///
+    /// The bytes are copied into a buffer owned by the returned bitmap. The
+    /// result must only be read, never modified. Reading no more than
+    /// `bytes.count`, the call itself is safe, but a bitmap recovered from
+    /// arbitrary bytes may still be malformed: check `internalValidate()` before
+    /// using one that came from an untrusted source.
+    ///
+    public static func portableDeserializeFrozen(bytes: [UInt8]) -> Self? {
+        return withOwnedAlignedCopy(of: bytes) { buffer in
+            croaring.roaring64_bitmap_portable_deserialize_frozen(
+                buffer.assumingMemoryBound(to: CChar.self),
+                bytes.count
+            )
+        }
+    }
+
+    ///
+    /// Copies `bytes` into an aligned buffer, hands it to `makeBitmap`, and ties
+    /// the buffer's lifetime to the resulting bitmap.
+    ///
+    private static func withOwnedAlignedCopy(
+        of bytes: [UInt8],
+        _ makeBitmap: (UnsafeMutableRawPointer) -> OpaquePointer?
+    ) -> Self? {
         let buffer = UnsafeMutableRawPointer.allocate(
             byteCount: Swift.max(bytes.count, 1),
             alignment: 64
@@ -1296,10 +1334,7 @@ extension Roaring64Bitmap {
                 buffer.copyMemory(from: base, byteCount: bytes.count)
             }
         }
-        guard let ptr = croaring.roaring64_bitmap_frozen_view(
-            buffer.assumingMemoryBound(to: CChar.self),
-            bytes.count
-        ) else {
+        guard let ptr = makeBitmap(buffer) else {
             buffer.deallocate()
             return nil
         }
