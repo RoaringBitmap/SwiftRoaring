@@ -85,7 +85,7 @@ bitmap.addRange(min: 0, max: 500)
 let cpy = bitmap.copy()
 
 //Example: Operators
-let and = bitmap && cpy
+let and = bitmap & cpy
 
 //Example: Iterate
 for i in bitmap {
@@ -94,6 +94,29 @@ for i in bitmap {
 
 //See documentation for more functionalities!
 
+```
+
+### 64-bit bitmaps
+
+`RoaringBitmap` stores `UInt32` values. To store `UInt64` values, use
+`Roaring64Bitmap`, which offers the same API:
+
+```swift
+import SwiftRoaring
+
+let bitmap: Roaring64Bitmap = [1, 1 << 32, UInt64.max]
+
+bitmap.add(1_000...2_000)
+print(bitmap.count)                 // 1004
+print(bitmap.contains(1 << 32))     // true
+
+//Set operations, ranges, rank/select, iterators and
+//serialization all work as they do in 32 bits.
+let other = Roaring64Bitmap(range: 0..<1_000_000, step: 7)
+let common = bitmap & other
+
+//Convert a 32-bit bitmap to a 64-bit one
+let widened = Roaring64Bitmap(RoaringBitmap([1, 2, 3]))
 ```
 
 ### Development

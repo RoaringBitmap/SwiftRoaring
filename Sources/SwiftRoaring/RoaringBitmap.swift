@@ -9,11 +9,29 @@ public typealias RoaringStatistics = roaring_statistics_t
 ///
 /// Swift wrapper for CRoaring (a C/C++ implementation at https://github.com/RoaringBitmap/CRoaring)
 ///
+/// Every function of CRoaring's public 32-bit API is reachable from this type,
+/// except for five that have no Swift meaning:
+/// `roaring_bitmap_init_with_capacity` and `roaring_bitmap_init_cleared`
+/// initialize a `roaring_bitmap_t` the caller allocated, which `init()` and
+/// `init(capacity:)` do here; `roaring_iterator_create`,
+/// `roaring_uint32_iterator_copy` and `roaring_uint32_iterator_free` are the
+/// heap-allocated iterator, replaced by the allocation-free
+/// `RoaringBitmapIterator` value type. The variadic `roaring_bitmap_from` macro
+/// corresponds to `init(values:)` and to array literals.
+///
 public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
                                   Hashable, ExpressibleByArrayLiteral, SetAlgebra, Codable {
 
     @usableFromInline
     var ptr: UnsafeMutablePointer<roaring_bitmap_t>
+
+    ///
+    /// When this bitmap is a *frozen view* created by `frozenView(bytes:)`, this
+    /// holds the aligned buffer the view reads from. It is deallocated, after the
+    /// bitmap itself, by `deinit`. It is `nil` for every ordinary bitmap.
+    ///
+    @usableFromInline
+    var frozenBacking: UnsafeMutableRawPointer?
 
     public typealias Element = UInt32
 
@@ -73,6 +91,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
 
     deinit {
         self.free()
+        self.frozenBacking?.deallocate()
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -451,17 +470,17 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// Copies a  bitmap from src to dest. It is assumed that the pointer dest
-    /// is to an already allocated bitmap. The content of the dest bitmap is
-    /// freed/deleted.
+    /// Replaces the content of this bitmap with a copy of `other`.
     ///
-    /// It might be preferable and simpler to call `roaring_bitmap_copy` except
-    /// that `roaring_bitmap_overwrite` can save on memory allocations.
+    /// It might be preferable and simpler to call `copy()`, except that
+    /// `overwrite(with:)` can save on memory allocations. Returns false if the
+    /// copy could not be made.
     ///
-    ///
-    // func overwrite(dest: RoaringBitmap) -> Bool {
-    //     return croaring.roaring_bitmap_overwrite(dest.ptr, self.ptr)
-    // }
+    @inlinable @inline(__always)
+    @discardableResult
+    public func overwrite(with other: RoaringBitmap) -> Bool {
+        return croaring.roaring_bitmap_overwrite(self.ptr, other.ptr)
+    }
 
     ///
     /// Add value x
@@ -538,13 +557,22 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// Remove value x
+    /// Remove value x, and return it if it was there.
     ///
     @inlinable @inline(__always)
     @discardableResult
     public func remove(_ value: UInt32) -> UInt32? {
         guard self.removeCheck(value) else { return nil }
         return value
+    }
+
+    ///
+    /// Remove value x, without reporting whether it was there. Slightly faster
+    /// than `remove(_:)`.
+    ///
+    @inlinable @inline(__always)
+    public func discard(_ value: UInt32) {
+        croaring.roaring_bitmap_remove(self.ptr, value)
     }
 
     ///
@@ -563,11 +591,13 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         croaring.roaring_bitmap_remove_range(self.ptr, min, max)
     }
 
-    // /** Remove multiple values */
-    // func removeMany(n_args: size_t, vals: [UInt32]) {
-    //    let ptr: UnsafeMutablePointer = UnsafeMutablePointer(mutating: vals)
-    //     croaring.roaring_bitmap_remove_many(self.ptr, n_args, ptr)
-    // }
+    ///
+    /// Remove multiple values, faster than repeatedly calling `remove(_:)`.
+    ///
+    @inlinable @inline(__always)
+    public func removeMany(values: [UInt32]) {
+        croaring.roaring_bitmap_remove_many(self.ptr, values.count, values)
+    }
 
     ///
     /// Remove value x
@@ -675,20 +705,20 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         return array
     }
 
-    // /**
-    // * Convert the bitmap to an array from "offset" by "limit". Write the output to "ans".
-    // * so, you can get data in paging.
-    // * caller is responsible to ensure that there is enough memory
-    // * allocated
-    // * (e.g., ans = malloc(roaring_bitmap_get_cardinality(limit)
-    // *   * sizeof(uint32_t))
-    // * Return false in case of failure (e.g., insufficient memory)
-    // */
-    // public func toArrayRange(offset: size_t, limit: size_t) -> [UInt32] {
-    //     let array: [UInt32] = []
-    //     _ = croaring.roaring_bitmap_range_uint32_array(self.ptr, offset, limit, array)
-    //     return array
-    // }
+    ///
+    /// Convert a slice of the bitmap to an array: at most `limit` values, starting
+    /// at the `offset`-th smallest one. Useful to page through a large bitmap.
+    /// Returns nil in case of failure.
+    ///
+    public func toArray(offset: size_t, limit: size_t) -> [UInt32]? {
+        let cardinality = size_t(self.count)
+        let count = offset >= cardinality ? 0 : Swift.min(limit, cardinality - offset)
+        var array = [UInt32](repeating: 0, count: count)
+        guard croaring.roaring_bitmap_range_uint32_array(self.ptr, offset, limit, &array) else {
+            return nil
+        }
+        return array
+    }
 
     ///
     ///  Remove run-length encoding even when it is more space efficient
@@ -850,10 +880,17 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// If the size of the roaring bitmap is strictly greater than rank, then this
-    /// function returns true and set the value to the the given rank.
-    /// Otherwise, it returns false.
+    /// Returns the element having the designated rank, where the smallest element
+    /// has rank 0. Returns nil if the bitmap holds `rank` elements or fewer.
     ///
+    @inlinable @inline(__always)
+    public func select(rank: UInt32) -> UInt32? {
+        var value: UInt32 = 0
+        guard croaring.roaring_bitmap_select(self.ptr, rank, &value) else { return nil }
+        return value
+    }
+
+    @available(*, deprecated, message: "the result was discarded; use select(rank:) -> UInt32? instead")
     @inlinable @inline(__always)
     public func select(rank: UInt32, value: UInt32) -> Bool {
         var cpy = value
@@ -924,7 +961,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// Creates a RoaringBitmapIterator.
+    /// Creates a RoaringBitmapIterator positioned on the smallest value.
     ///
     @inlinable @inline(__always)
     public func makeIterator() -> RoaringBitmapIterator {
@@ -932,7 +969,20 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     }
 
     ///
-    /// Structure used to iterate through values in a roaring bitmap
+    /// Creates a RoaringBitmapIterator positioned on the largest value, to be
+    /// walked backward with `previous()`.
+    ///
+    @inlinable @inline(__always)
+    public func makeLastIterator() -> RoaringBitmapIterator {
+        return RoaringBitmapIterator(bitmap: self, atLast: true)
+    }
+
+    ///
+    /// Structure used to iterate through values in a roaring bitmap.
+    ///
+    /// The iterator is a value type holding the C iterator inline, so no
+    /// allocation takes place and copying it copies its position (the role
+    /// `roaring_uint32_iterator_copy` plays in C).
     ///
     @frozen
     public struct RoaringBitmapIterator: IteratorProtocol {
@@ -950,11 +1000,162 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
         }
 
         @inlinable @inline(__always)
+        init(bitmap: RoaringBitmap, atLast: Bool) {
+            self.i = roaring_uint32_iterator_t()
+            if atLast {
+                roaring_iterator_init_last(bitmap.ptr, &self.i)
+            } else {
+                roaring_iterator_init(bitmap.ptr, &self.i)
+            }
+            self.bitmap = bitmap
+        }
+
+        ///
+        /// Whether the iterator currently points at a value.
+        ///
+        @inlinable @inline(__always)
+        public var hasValue: Bool {
+            return i.has_value
+        }
+
+        ///
+        /// The value the iterator points at, undefined when `hasValue` is false.
+        ///
+        @inlinable @inline(__always)
+        public var currentValue: UInt32 {
+            return i.current_value
+        }
+
+        ///
+        /// The value the iterator points at, or nil if it is exhausted.
+        ///
+        @inlinable @inline(__always)
+        public var value: UInt32? {
+            return i.has_value ? i.current_value : nil
+        }
+
+        @inlinable @inline(__always)
         public mutating func next() -> UInt32? {
             guard i.has_value else { return nil }
             let val = i.current_value
             croaring.roaring_uint32_iterator_advance(&self.i)
             return val
+        }
+
+        ///
+        /// Moves the iterator to the next value. Returns true if it still points
+        /// at a value afterward.
+        ///
+        @inlinable @inline(__always)
+        @discardableResult
+        public mutating func advance() -> Bool {
+            return croaring.roaring_uint32_iterator_advance(&self.i)
+        }
+
+        ///
+        /// Moves the iterator to the previous value. Returns true if it still
+        /// points at a value afterward.
+        ///
+        @inlinable @inline(__always)
+        @discardableResult
+        public mutating func previous() -> Bool {
+            return croaring.roaring_uint32_iterator_previous(&self.i)
+        }
+
+        ///
+        /// Returns the previous value, walking the bitmap backward, or nil once
+        /// the iterator is exhausted. Pair with `makeLastIterator()`.
+        ///
+        @inlinable @inline(__always)
+        public mutating func nextBackward() -> UInt32? {
+            guard i.has_value else { return nil }
+            let val = i.current_value
+            croaring.roaring_uint32_iterator_previous(&self.i)
+            return val
+        }
+
+        ///
+        /// Moves the iterator to the smallest value that is greater than or equal
+        /// to `value`. Returns true if such a value exists.
+        ///
+        @inlinable @inline(__always)
+        @discardableResult
+        public mutating func moveEqualOrLarger(_ value: UInt32) -> Bool {
+            return croaring.roaring_uint32_iterator_move_equalorlarger(&self.i, value)
+        }
+
+        ///
+        /// Reads up to `count` values into an array, advancing the iterator past
+        /// them. The array is shorter than `count` when the bitmap runs out.
+        ///
+        public mutating func read(count: UInt32) -> [UInt32] {
+            var buffer = [UInt32](repeating: 0, count: Int(count))
+            let read = buffer.withUnsafeMutableBufferPointer { buf in
+                croaring.roaring_uint32_iterator_read(&self.i, buf.baseAddress, count)
+            }
+            buffer.removeLast(Int(count) - Int(read))
+            return buffer
+        }
+
+        ///
+        /// Reads up to `count` values in decreasing order into an array, moving
+        /// the iterator backward past them. Pair with `makeLastIterator()`.
+        ///
+        public mutating func readBackward(count: UInt32) -> [UInt32] {
+            var buffer = [UInt32](repeating: 0, count: Int(count))
+            let read = buffer.withUnsafeMutableBufferPointer { buf in
+                croaring.roaring_uint32_iterator_read_backward(&self.i, buf.baseAddress, count)
+            }
+            buffer.removeLast(Int(count) - Int(read))
+            return buffer
+        }
+
+        ///
+        /// Reads up to `count` maximal runs of consecutive values, advancing the
+        /// iterator past them. `{1, 2, 3, 5, 6}` reads as `[1...3, 5...6]`.
+        ///
+        public mutating func readRanges(count: Int) -> [ClosedRange<UInt32>] {
+            var buffer = [roaring_uint32_range_closed_t](
+                repeating: roaring_uint32_range_closed_t(), count: count
+            )
+            let read = buffer.withUnsafeMutableBufferPointer { buf in
+                croaring.roaring_uint32_iterator_read_ranges(&self.i, buf.baseAddress, count)
+            }
+            return buffer.prefix(read).map { $0.min...$0.max }
+        }
+
+        ///
+        /// Reads up to `count` maximal runs of consecutive values in decreasing
+        /// order, moving the iterator backward past them.
+        ///
+        public mutating func readPreviousRanges(count: Int) -> [ClosedRange<UInt32>] {
+            var buffer = [roaring_uint32_range_closed_t](
+                repeating: roaring_uint32_range_closed_t(), count: count
+            )
+            let read = buffer.withUnsafeMutableBufferPointer { buf in
+                croaring.roaring_uint32_iterator_read_prev_ranges(&self.i, buf.baseAddress, count)
+            }
+            return buffer.prefix(read).map { $0.min...$0.max }
+        }
+
+        ///
+        /// Advances the iterator past `count` values without reading them.
+        /// Returns how many were actually skipped.
+        ///
+        @inlinable @inline(__always)
+        @discardableResult
+        public mutating func skip(_ count: UInt32) -> UInt32 {
+            return croaring.roaring_uint32_iterator_skip(&self.i, count)
+        }
+
+        ///
+        /// Moves the iterator backward past `count` values without reading them.
+        /// Returns how many were actually skipped.
+        ///
+        @inlinable @inline(__always)
+        @discardableResult
+        public mutating func skipBackward(_ count: UInt32) -> UInt32 {
+            return croaring.roaring_uint32_iterator_skip_backward(&self.i, count)
         }
     }
 
@@ -993,5 +1194,458 @@ extension RangeReplaceableCollection {
     init(capacity: Int) {
         self.init()
         self.reserveCapacity(capacity)
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                        BULK (CONTEXT) OPERATIONS                      ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// A bit of context usable with the `*Bulk` operations.
+    ///
+    /// Reusing a context across calls whose values are in increasing order lets
+    /// CRoaring skip the container lookup. A context may only be used with a
+    /// single bitmap, and any modification of that bitmap that does not go
+    /// through a `*Bulk` call taking the same context invalidates it.
+    ///
+    @frozen
+    public struct BulkContext {
+        @usableFromInline
+        internal var context: roaring_bulk_context_t
+
+        @inlinable @inline(__always)
+        public init() {
+            self.context = roaring_bulk_context_t()
+        }
+
+        ///
+        /// Forgets the cached container, making the context usable again after
+        /// the bitmap was modified out of band (or with another bitmap).
+        ///
+        @inlinable @inline(__always)
+        public mutating func reset() {
+            self.context = roaring_bulk_context_t()
+        }
+    }
+
+    ///
+    /// Add value x, using context from a previous insert for speed optimization.
+    ///
+    @inlinable @inline(__always)
+    public func addBulk(_ value: UInt32, context: inout BulkContext) {
+        croaring.roaring_bitmap_add_bulk(self.ptr, &context.context, value)
+    }
+
+    ///
+    /// Check if value x is present, using context from a previous lookup for
+    /// speed optimization.
+    ///
+    @inlinable @inline(__always)
+    public func containsBulk(_ value: UInt32, context: inout BulkContext) -> Bool {
+        return croaring.roaring_bitmap_contains_bulk(self.ptr, &context.context, value)
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                         RANGES AND OFFSETS                            ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Remove all values in range [min, max]
+    ///
+    @inlinable @inline(__always)
+    public func remove(_ range: ClosedRange<UInt32>) {
+        croaring.roaring_bitmap_remove_range_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// Remove all values in range [min, max)
+    ///
+    @inlinable @inline(__always)
+    public func remove(_ range: Range<UInt64>) {
+        croaring.roaring_bitmap_remove_range(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// Check whether all the values from `min` to `max` (both included) are present.
+    ///
+    @inlinable @inline(__always)
+    public func containsRangeClosed(min: UInt32, max: UInt32) -> Bool {
+        return croaring.roaring_bitmap_contains_range_closed(self.ptr, min, max)
+    }
+
+    @inlinable @inline(__always)
+    public func contains(_ range: ClosedRange<UInt32>) -> Bool {
+        return croaring.roaring_bitmap_contains_range_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// Returns the number of elements in range [min, max].
+    ///
+    @inlinable @inline(__always)
+    public func rangeCardinalityClosed(min: UInt32, max: UInt32) -> UInt64 {
+        return croaring.roaring_bitmap_range_cardinality_closed(self.ptr, min, max)
+    }
+
+    @inlinable @inline(__always)
+    public func cardinality(in range: Range<UInt64>) -> UInt64 {
+        return croaring.roaring_bitmap_range_cardinality(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    @inlinable @inline(__always)
+    public func cardinality(in range: ClosedRange<UInt32>) -> UInt64 {
+        return croaring.roaring_bitmap_range_cardinality_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// Check whether the bitmap has any value in the range [x, y).
+    ///
+    @inlinable @inline(__always)
+    public func intersectWithRange(min: UInt64, max: UInt64) -> Bool {
+        return croaring.roaring_bitmap_intersect_with_range(self.ptr, min, max)
+    }
+
+    @inlinable @inline(__always)
+    public func intersects(_ range: Range<UInt64>) -> Bool {
+        return croaring.roaring_bitmap_intersect_with_range(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// compute the negation of the roaring bitmap within a specified closed
+    /// interval: [rangeStart, rangeEnd].
+    /// Areas outside the range are passed through unchanged.
+    ///
+    @inlinable @inline(__always)
+    public func flipClosed(rangeStart: UInt32, rangeEnd: UInt32) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_flip_closed(self.ptr, rangeStart, rangeEnd))
+    }
+
+    @inlinable @inline(__always)
+    public func flip(_ range: ClosedRange<UInt32>) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_flip_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        ))
+    }
+
+    ///
+    /// compute (in place) the negation of the roaring bitmap within a specified
+    /// closed interval: [rangeStart, rangeEnd].
+    /// Areas outside the range are passed through unchanged.
+    ///
+    @inlinable @inline(__always)
+    public func flipInplaceClosed(rangeStart: UInt32, rangeEnd: UInt32) {
+        croaring.roaring_bitmap_flip_inplace_closed(self.ptr, rangeStart, rangeEnd)
+    }
+
+    @inlinable @inline(__always)
+    public func flipInPlace(_ range: ClosedRange<UInt32>) {
+        croaring.roaring_bitmap_flip_inplace_closed(
+            self.ptr,
+            range.lowerBound,
+            range.upperBound
+        )
+    }
+
+    ///
+    /// Returns a new bitmap containing every value of this one shifted by
+    /// `offset`. Values that would fall outside `UInt32` are dropped.
+    ///
+    @inlinable @inline(__always)
+    public func addOffset(_ offset: Int64) -> Self {
+        return Self(ptr: croaring.roaring_bitmap_add_offset(self.ptr, offset))
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                              RANK/SELECT                              ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Returns the number of integers that are smaller or equal to each of
+    /// `values`, in one pass. `values` must be sorted in ascending order.
+    ///
+    public func rankMany(_ values: [UInt32]) -> [UInt64] {
+        var answers = [UInt64](repeating: 0, count: values.count)
+        guard !values.isEmpty else { return answers }
+        values.withUnsafeBufferPointer { input in
+            answers.withUnsafeMutableBufferPointer { output in
+                croaring.roaring_bitmap_rank_many(
+                    self.ptr,
+                    input.baseAddress,
+                    input.baseAddress! + input.count,
+                    output.baseAddress
+                )
+            }
+        }
+        return answers
+    }
+
+    ///
+    /// Returns the index of `value` in the sorted set, or nil when `value` is
+    /// not present. It is equivalent to, but faster than, `rank(value:) - 1`.
+    ///
+    @inlinable @inline(__always)
+    public func index(of value: UInt32) -> UInt64? {
+        let index = croaring.roaring_bitmap_get_index(self.ptr, value)
+        return index < 0 ? nil : UInt64(index)
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                            COPY-ON-WRITE                              ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Whether copy-on-write is enabled. With copy-on-write, `copy()` and the
+    /// binary operations may share containers instead of duplicating them,
+    /// which is faster and more compact but makes the bitmaps unsafe to use
+    /// from several threads at once.
+    ///
+    /// Turning it off unshares every container that is currently shared.
+    ///
+    @inlinable @inline(__always)
+    public var copyOnWrite: Bool {
+        get { return croaring.roaring_bitmap_get_copy_on_write(self.ptr) }
+        set { croaring.roaring_bitmap_set_copy_on_write(self.ptr, newValue) }
+    }
+
+    ///
+    /// Whether the bitmap holds at least one container shared with another
+    /// bitmap, which can only happen when copy-on-write is in use.
+    ///
+    @inlinable @inline(__always)
+    public var containsShared: Bool {
+        return croaring.roaring_contains_shared(self.ptr)
+    }
+
+    ///
+    /// Gives the bitmap its own copy of every shared container. Returns false
+    /// if the allocation failed, in which case the bitmap is unchanged.
+    ///
+    @inlinable @inline(__always)
+    @discardableResult
+    public func unshareAll() -> Bool {
+        return croaring.roaring_unshare_all(self.ptr)
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                          CLOSURE ITERATION                            ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Calls `body` once for every value of the bitmap, in increasing order,
+    /// stopping early as soon as `body` returns false. Returns true if the
+    /// whole bitmap was visited.
+    ///
+    /// This is faster than the `Sequence` conformance, at the cost of not being
+    /// able to interleave the iteration with other work.
+    ///
+    @discardableResult
+    public func iterate(_ body: (UInt32) -> Bool) -> Bool {
+        return withoutActuallyEscaping(body) { body in
+            var body = body
+            return withUnsafeMutablePointer(to: &body) { context in
+                croaring.roaring_iterate(self.ptr, { value, context in
+                    let body = context!.assumingMemoryBound(to: ((UInt32) -> Bool).self)
+                    return body.pointee(value)
+                }, UnsafeMutableRawPointer(context))
+            }
+        }
+    }
+
+    ///
+    /// Same as `iterate(_:)`, but each value is widened to 64 bits and combined
+    /// with `highBits`, which is useful when the bitmap stands for one slice of
+    /// a larger 64-bit set.
+    ///
+    @discardableResult
+    public func iterate64(highBits: UInt64, _ body: (UInt64) -> Bool) -> Bool {
+        return withoutActuallyEscaping(body) { body in
+            var body = body
+            return withUnsafeMutablePointer(to: &body) { context in
+                croaring.roaring_iterate64(self.ptr, { value, context in
+                    let body = context!.assumingMemoryBound(to: ((UInt64) -> Bool).self)
+                    return body.pointee(value)
+                }, highBits, UnsafeMutableRawPointer(context))
+            }
+        }
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                             CONVERSIONS                               ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Converts the bitmap to a plain uncompressed bitset, returned as its
+    /// 64-bit words: value `v` is present when bit `v % 64` of word `v / 64` is
+    /// set. Returns nil if the allocation failed.
+    ///
+    /// Beware that this needs about `maximum() / 8` bytes.
+    ///
+    public func toBitsetWords() -> [UInt64]? {
+        guard let bitset = croaring.bitset_create() else { return nil }
+        defer { croaring.bitset_free(bitset) }
+        guard croaring.roaring_bitmap_to_bitset(self.ptr, bitset) else { return nil }
+        guard let words = bitset.pointee.array else { return [] }
+        return [UInt64](UnsafeBufferPointer(start: words, count: bitset.pointee.arraysize))
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                        SERIALIZATION (EXTRAS)                         ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// Read a bitmap written by `serialize(buffer:)`, reading no more than
+    /// `maxbytes` bytes. Returns nil if the buffer does not hold a valid bitmap.
+    ///
+    public static func deserializeSafe(buffer: [Int8], maxbytes: size_t) -> Self? {
+        guard let ptr = croaring.roaring_bitmap_deserialize_safe(buffer, maxbytes) else {
+            return nil
+        }
+        return Self(ptr: ptr)
+    }
+
+    ///
+    /// How many bytes `frozenSerialize()` needs.
+    ///
+    @inlinable @inline(__always)
+    public func frozenSizeInBytes() -> size_t {
+        return croaring.roaring_bitmap_frozen_size_in_bytes(self.ptr)
+    }
+
+    ///
+    /// Serializes the bitmap in the "frozen" format, which mirrors the in-memory
+    /// layout so that `frozenView(bytes:)` can read it back without parsing.
+    ///
+    /// The format is neither portable across architectures nor stable across
+    /// releases of CRoaring; use `portableSerialize(buffer:)` for storage.
+    ///
+    public func frozenSerialize() -> [UInt8] {
+        var buffer = [UInt8](repeating: 0, count: self.frozenSizeInBytes())
+        guard !buffer.isEmpty else { return buffer }
+        buffer.withUnsafeMutableBytes {
+            croaring.roaring_bitmap_frozen_serialize(
+                self.ptr,
+                $0.baseAddress!.assumingMemoryBound(to: CChar.self)
+            )
+        }
+        return buffer
+    }
+
+    ///
+    /// Creates a read-only bitmap out of bytes produced by `frozenSerialize()`.
+    /// Returns nil if the bytes do not hold a valid frozen bitmap.
+    ///
+    /// The bytes are copied into a suitably aligned buffer owned by the returned
+    /// bitmap. The result must only be read, never modified.
+    ///
+    public static func frozenView(bytes: [UInt8]) -> Self? {
+        return withOwnedAlignedCopy(of: bytes, alignment: 32) { buffer in
+            croaring.roaring_bitmap_frozen_view(
+                buffer.assumingMemoryBound(to: CChar.self),
+                bytes.count
+            ).map { UnsafeMutablePointer(mutating: $0) }
+        }
+    }
+
+    ///
+    /// Reads a bitmap serialized by `portableSerialize(buffer:)` without copying
+    /// the containers out of the buffer, which is faster than
+    /// `portableDeserialize(buffer:)` but yields a read-only bitmap.
+    ///
+    /// The bytes are copied into a buffer owned by the returned bitmap. This is
+    /// unsafe in the same ways the underlying C function is: it trusts the bytes
+    /// to hold a valid serialized bitmap.
+    ///
+    public static func portableDeserializeFrozen(bytes: [UInt8]) -> Self? {
+        return withOwnedAlignedCopy(of: bytes, alignment: 32) { buffer in
+            croaring.roaring_bitmap_portable_deserialize_frozen(
+                buffer.assumingMemoryBound(to: CChar.self)
+            )
+        }
+    }
+
+    ///
+    /// Copies `bytes` into an aligned buffer, hands it to `makeBitmap`, and ties
+    /// the buffer's lifetime to the resulting bitmap.
+    ///
+    private static func withOwnedAlignedCopy(
+        of bytes: [UInt8],
+        alignment: Int,
+        _ makeBitmap: (UnsafeMutableRawPointer) -> UnsafeMutablePointer<roaring_bitmap_t>?
+    ) -> Self? {
+        let buffer = UnsafeMutableRawPointer.allocate(
+            byteCount: Swift.max(bytes.count, 1),
+            alignment: alignment
+        )
+        bytes.withUnsafeBytes { source in
+            if let base = source.baseAddress {
+                buffer.copyMemory(from: base, byteCount: bytes.count)
+            }
+        }
+        guard let ptr = makeBitmap(buffer) else {
+            buffer.deallocate()
+            return nil
+        }
+        let bitmap = Self(ptr: ptr)
+        bitmap.frozenBacking = buffer
+        return bitmap
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+///                              VALIDATION                               ///
+/////////////////////////////////////////////////////////////////////////////
+
+extension RoaringBitmap {
+    ///
+    /// (For advanced users.)
+    /// Checks the internal invariants of the bitmap, which is mostly useful on
+    /// bitmaps that came from an untrusted source. Returns nil when the bitmap
+    /// is well formed, and the reason it is not otherwise.
+    ///
+    public func internalValidate() -> String? {
+        var reason: UnsafePointer<CChar>?
+        guard !croaring.roaring_bitmap_internal_validate(self.ptr, &reason) else {
+            return nil
+        }
+        return reason.map { String(cString: $0) } ?? "unknown reason"
     }
 }
