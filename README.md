@@ -137,6 +137,16 @@ You can run tests using Swift Package Manager as follows:
 swift test
 ```
 
+### Benchmarks
+
+```bash
+cd Benchmarks
+./fetch-datasets.sh
+swift package benchmark
+```
+
+See [Benchmarks/README.md](Benchmarks/README.md).
+
 ### Interactive use
 
 ```
