@@ -1,4 +1,4 @@
-name: Swift on Ubuntu (latest)
+name: Tests
 
 on:
   push:
@@ -9,14 +9,14 @@ on:
       - master
 
 jobs:
-  tests:
+  linux:
+    name: Swift ${{ matrix.image }}
     runs-on: ubuntu-latest
+    container: swift:${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["5.6-focal", "5.10", "6.2", "latest"]
     steps:
       - uses: actions/checkout@v4
-      - uses: fwal/setup-swift@v2
-      - name: linuxmain
-        run: swift test
-      - name: Build
-        run: swift build
-      - name: Test
-        run: swift test
+      - run: swift test

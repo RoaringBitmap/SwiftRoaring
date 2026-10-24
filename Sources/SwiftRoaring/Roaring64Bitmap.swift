@@ -25,7 +25,7 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
                                     Hashable, ExpressibleByArrayLiteral, SetAlgebra, Codable {
 
     @usableFromInline
-    var ptr: OpaquePointer
+    let ptr: OpaquePointer
 
     ///
     /// When this bitmap is a *frozen view* created by `frozenView(bytes:)`, this
@@ -33,7 +33,7 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
     /// bitmap itself, by `deinit`. It is `nil` for every ordinary bitmap.
     ///
     @usableFromInline
-    var frozenBacking: UnsafeMutableRawPointer?
+    let frozenBacking: UnsafeMutableRawPointer?
 
     public typealias Element = UInt64
 
@@ -44,8 +44,8 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
     ///
     /// Creates a new bitmap (initially empty)
     ///
-    required public init() {
-        self.ptr = croaring.roaring64_bitmap_create()!
+    required public convenience init() {
+        self.init(ptr: croaring.roaring64_bitmap_create()!)
     }
 
     ///
@@ -53,15 +53,21 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
     ///
     required public init(ptr: OpaquePointer) {
         self.ptr = ptr
+        self.frozenBacking = nil
+    }
+
+    private init(ptr: OpaquePointer, frozenBacking: UnsafeMutableRawPointer) {
+        self.ptr = ptr
+        self.frozenBacking = frozenBacking
     }
 
     ///
     /// Add all the values between min (included) and max (excluded) that are at a
     /// distance k*step from min.
     ///
-    public init(min: UInt64, max: UInt64, step: UInt64) {
-        self.ptr = croaring.roaring64_bitmap_from_range(min, max, step)
-            ?? croaring.roaring64_bitmap_create()!
+    public convenience init(min: UInt64, max: UInt64, step: UInt64) {
+        self.init(ptr: croaring.roaring64_bitmap_from_range(min, max, step)
+            ?? croaring.roaring64_bitmap_create()!)
     }
 
     public convenience init(range: Range<UInt64>, step: UInt64) {
@@ -71,8 +77,8 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
     ///
     /// Creates a new bitmap from an array of `uint64_t` integers
     ///
-    public init(values: [UInt64]) {
-        self.ptr = croaring.roaring64_bitmap_of_ptr(values.count, values)!
+    public convenience init(values: [UInt64]) {
+        self.init(ptr: croaring.roaring64_bitmap_of_ptr(values.count, values)!)
     }
 
     ///
@@ -80,8 +86,8 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
     /// its containers over. This is cheaper than copying them, but it leaves
     /// `bitmap` empty.
     ///
-    public init(moving bitmap: RoaringBitmap) {
-        self.ptr = croaring.roaring64_bitmap_move_from_roaring32(bitmap.ptr)!
+    public convenience init(moving bitmap: RoaringBitmap) {
+        self.init(ptr: croaring.roaring64_bitmap_move_from_roaring32(bitmap.ptr)!)
     }
 
     ///
@@ -92,8 +98,8 @@ public final class Roaring64Bitmap: Sequence, Equatable, CustomStringConvertible
         self.init(moving: bitmap.copy())
     }
 
-    public required init(arrayLiteral: Element...) {
-        self.ptr = croaring.roaring64_bitmap_of_ptr(arrayLiteral.count, arrayLiteral)!
+    public required convenience init(arrayLiteral: Element...) {
+        self.init(ptr: croaring.roaring64_bitmap_of_ptr(arrayLiteral.count, arrayLiteral)!)
     }
 
     deinit {
@@ -1338,15 +1344,13 @@ extension Roaring64Bitmap {
             buffer.deallocate()
             return nil
         }
-        let bitmap = Self(ptr: ptr)
-        bitmap.frozenBacking = buffer
-        return bitmap
+        return Self(ptr: ptr, frozenBacking: buffer)
     }
 
     ///
     /// Encodable conformance, using the portable format.
     ///
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(Data(self.portableSerialize()).base64EncodedString())
     }
@@ -1354,7 +1358,7 @@ extension Roaring64Bitmap {
     ///
     /// Decodable conformance, using the portable format.
     ///
-    public convenience init(from decoder: Decoder) throws {
+    public convenience init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let encoded = try container.decode(String.self)
         guard let data = Data(base64Encoded: encoded) else {
