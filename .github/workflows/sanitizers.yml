@@ -1,0 +1,39 @@
+name: Sanitizers
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  asan:
+    name: Address sanitizer
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Version
+        run: swift --version
+      - name: Test
+        run: swift test --sanitize=address
+
+  fuzz:
+    name: Fuzzer
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Fuzz
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build
+        run: swift build -c release --sanitize=fuzzer --sanitize=address
+      - name: Fuzz
+        run: mkdir -p corpus && .build/release/SwiftRoaringFuzz -max_total_time=120 corpus
+      - name: Upload crash
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: fuzz-crash
+          path: Fuzz/crash-*
