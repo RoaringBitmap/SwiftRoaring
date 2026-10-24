@@ -25,7 +25,7 @@ swift package benchmark baseline compare master
 
 Swift times one pass; C reports the fastest window per operation. Divide the Swift p0 by:
 
-- `microbench/IterateAll`, `frozen/portable_deserialize`: bitmaps (200).
+- `microbench/IterateAll`, `frozen/portable_deserialize`, `frozen/portable_deserialize_frozen`: bitmaps (200).
 - `microbench/RandomAccess`: 3 x bitmaps.
 - `microbench/SuccessiveIntersection`: bitmaps - 1.
 - `iteration/previous`: union cardinality.

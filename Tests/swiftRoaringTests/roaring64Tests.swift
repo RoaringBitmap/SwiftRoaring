@@ -375,6 +375,51 @@ class roaring64Tests: XCTestCase {
         XCTAssertNil(Roaring64Bitmap.portableDeserializeFrozen(bytes: Array(bytes.prefix(3))))
     }
 
+    #if compiler(>=6.2)
+    @available(macOS 10.14.4, iOS 12.2, watchOS 5.2, tvOS 12.2, visionOS 1.0, *)
+    func testPortableBorrowedBytes() {
+        rbm.addMany(values: spread)
+        rbm.add(1_000...2_000)
+        _ = rbm.runOptimize()
+
+        let bytes = rbm.portableSerialize()
+        let into = UnsafeMutableRawBufferPointer.allocate(byteCount: bytes.count + 1, alignment: 1)
+        defer { into.deallocate() }
+        var output = OutputRawSpan(buffer: into, initializedCount: 0)
+        output.append(7)
+        rbm.portableSerialize(into: &output)
+        let written = output.finalize(for: into)
+        XCTAssertEqual(written, bytes.count + 1)
+        XCTAssertEqual(Array(into[1...bytes.count]), bytes)
+
+        // One byte off alignment, as values read out of a database can be.
+        ([0] + bytes).withUnsafeBytes { raw in
+            let borrowed = RawSpan(_unsafeBytes: UnsafeRawBufferPointer(rebasing: raw[1...]))
+            XCTAssertEqual(Roaring64Bitmap(portableBytes: borrowed), rbm)
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.copy() }, rbm)
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.contains(1_500) }, true)
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.count }, rbm.count)
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.max() } ?? nil, rbm.max())
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.select(rank: 10) } ?? nil, rbm.select(rank: 10))
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.min() } ?? nil, rbm.min())
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: borrowed) { $0.rank(value: 1_500) }, rbm.rank(value: 1_500))
+
+            let short = RawSpan(_unsafeBytes: UnsafeRawBufferPointer(rebasing: raw[1..<4]))
+            XCTAssertNil(Roaring64Bitmap(portableBytes: short))
+            XCTAssertNil(Roaring64Bitmap.withPortableView(of: short) { _ in true })
+        }
+        // A view covers exactly one bitmap: trailing bytes are rejected.
+        (bytes + [0]).withUnsafeBytes { raw in
+            XCTAssertNil(Roaring64Bitmap.withPortableView(of: RawSpan(_unsafeBytes: raw)) { _ in true })
+        }
+        Roaring64Bitmap().portableSerialize().withUnsafeBytes { raw in
+            XCTAssertEqual(Roaring64Bitmap.withPortableView(of: RawSpan(_unsafeBytes: raw)) {
+                $0.isEmpty && $0.min() == nil && $0.max() == nil && $0.select(rank: 0) == nil
+            }, true)
+        }
+    }
+    #endif
+
     func testEmptyBitmapRoundTrips() {
         let empty = Roaring64Bitmap()
         _ = empty.shrink()

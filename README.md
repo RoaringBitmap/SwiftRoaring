@@ -119,6 +119,20 @@ let common = bitmap & other
 let widened = Roaring64Bitmap(RoaringBitmap([1, 2, 3]))
 ```
 
+### RawSpan
+
+With Swift 6.2 or later, both bitmap types read the portable format from a [`RawSpan`](https://www.swift.org/blog/swift-6.2-released/#safe-systems-programming) and write it to an `OutputRawSpan`, so serialized bytes are read where they are instead of being copied into an array first:
+
+```swift
+let bytes = bitmap.portableSerialize()
+
+// Deserialize; nil if the bytes do not parse
+let copy = RoaringBitmap(portableBytes: bytes.span.bytes)
+
+// Query the bytes in place, without deserializing
+let found = RoaringBitmap.withPortableView(of: bytes.span.bytes) { $0.contains(42) }
+```
+
 ### Development
 
 You can build using Swift Package Manager as follows:
