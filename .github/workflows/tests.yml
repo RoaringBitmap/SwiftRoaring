@@ -1,4 +1,4 @@
-name: Swift on Ubuntu (latest)
+name: Tests
 
 on:
   push:
@@ -9,18 +9,14 @@ on:
       - master
 
 jobs:
-  tests:
+  linux:
+    name: Swift ${{ matrix.image }}
     runs-on: ubuntu-latest
-    # The official image, rather than fwal/setup-swift, which does not
-    # support Ubuntu 26.04 (ubuntu-latest).
-    container: swift:6.2
+    container: swift:${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["5.6-focal", "5.10", "6.2", "latest"]
     steps:
       - uses: actions/checkout@v4
-      - name: Version
-        run: swift --version
-      - name: linuxmain
-        run: swift test
-      - name: Build
-        run: swift build
-      - name: Test
-        run: swift test
+      - run: swift test

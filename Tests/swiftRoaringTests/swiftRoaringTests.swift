@@ -338,6 +338,9 @@ class swiftRoaringTests: XCTestCase {
         XCTAssert(s == expected)
 
         XCTAssert(r == b)
+
+        XCTAssertThrowsError(try dec.decode(RoaringBitmap.self, from: Data("\"AAAA\"".utf8)))
+        XCTAssertThrowsError(try dec.decode(RoaringBitmap.self, from: Data("\"not base64\"".utf8)))
     }
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>) {

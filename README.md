@@ -1,5 +1,5 @@
 # SwiftRoaring
-<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift4-compatible-green.svg?style=flat" alt="Swift 4 compatible" /></a>
+<a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift_5.6%2B-compatible-green.svg?style=flat" alt="Swift 5.6 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) ![Ubuntu  CI](https://github.com/RoaringBitmap/SwiftRoaring/workflows/Swift%20on%20Ubuntu%20(latest)/badge.svg)
 
@@ -29,7 +29,7 @@ Roaring bitmaps are found to work well in many important applications:
 
 ### Dependencies
 
-Swift 4.0 or higher
+Swift 5.6 or higher
 
 ### Usage using Swift Package Manager
 
