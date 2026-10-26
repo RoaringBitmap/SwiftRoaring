@@ -11,9 +11,13 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    # The official image, rather than fwal/setup-swift, which does not
+    # support Ubuntu 26.04 (ubuntu-latest).
+    container: swift:6.2
     steps:
       - uses: actions/checkout@v4
-      - uses: fwal/setup-swift@v2
+      - name: Version
+        run: swift --version
       - name: linuxmain
         run: swift test
       - name: Build
