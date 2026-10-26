@@ -341,6 +341,14 @@ class swiftRoaringTests: XCTestCase {
 
         XCTAssertThrowsError(try dec.decode(RoaringBitmap.self, from: Data("\"AAAA\"".utf8)))
         XCTAssertThrowsError(try dec.decode(RoaringBitmap.self, from: Data("\"not base64\"".utf8)))
+
+        // A well-formed header over an array container whose last two values
+        // are out of order: it deserializes, but it is not a valid bitmap.
+        var bytes = [UInt8](Data(base64Encoded: try! dec.decode(String.self, from: a))!)
+        bytes.swapAt(bytes.count - 4, bytes.count - 2)
+        bytes.swapAt(bytes.count - 3, bytes.count - 1)
+        let unsorted = try! enc.encode(Data(bytes).base64EncodedString())
+        XCTAssertThrowsError(try dec.decode(RoaringBitmap.self, from: unsorted))
     }
 
     func makeSets() -> (RoaringBitmap, RoaringBitmap, Set<UInt32>, Set<UInt32>) {

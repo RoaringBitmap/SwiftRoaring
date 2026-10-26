@@ -1,7 +1,7 @@
 # SwiftRoaring
 <a href="https://developer.apple.com/swift"><img src="https://img.shields.io/badge/Swift_5.6%2B-compatible-green.svg?style=flat" alt="Swift 5.6 compatible" /></a>
 <a href="https://github.com/apple/swift-package-manager"><img src="https://img.shields.io/badge/Swift%20Package%20Manager-compatible-brightgreen.svg"/></a>
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) ![Ubuntu  CI](https://github.com/RoaringBitmap/SwiftRoaring/workflows/Swift%20on%20Ubuntu%20(latest)/badge.svg)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) ![Tests](https://github.com/RoaringBitmap/SwiftRoaring/actions/workflows/tests.yml/badge.svg)
 
 
 

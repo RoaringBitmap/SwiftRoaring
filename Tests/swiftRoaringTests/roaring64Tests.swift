@@ -453,6 +453,17 @@ class roaring64Tests: XCTestCase {
 
         let garbage = try JSONEncoder().encode("not a bitmap")
         XCTAssertThrowsError(try JSONDecoder().decode(Roaring64Bitmap.self, from: garbage))
+
+        // A well-formed header over an array container whose last two values
+        // are out of order: it deserializes, but it is not a valid bitmap.
+        let small = Roaring64Bitmap()
+        small.addMany(values: Array(stride(from: 0, to: 100, by: 2)))
+        let json = try JSONDecoder().decode(String.self, from: try JSONEncoder().encode(small))
+        var bytes = [UInt8](try XCTUnwrap(Data(base64Encoded: json)))
+        bytes.swapAt(bytes.count - 4, bytes.count - 2)
+        bytes.swapAt(bytes.count - 3, bytes.count - 1)
+        let unsorted = try JSONEncoder().encode(Data(bytes).base64EncodedString())
+        XCTAssertThrowsError(try JSONDecoder().decode(Roaring64Bitmap.self, from: unsorted))
     }
 
     func testFromRoaringBitmap() {

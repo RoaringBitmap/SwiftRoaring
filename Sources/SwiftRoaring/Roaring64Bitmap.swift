@@ -1380,6 +1380,13 @@ extension Roaring64Bitmap {
             )
         }
         self.init(ptr: ptr)
+        // A bitmap read from untrusted bytes is only safe to use once validated.
+        if let reason = internalValidate() {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not a valid serialized Roaring64Bitmap: \(reason)"
+            )
+        }
     }
 }
 

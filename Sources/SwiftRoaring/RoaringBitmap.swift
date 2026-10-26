@@ -805,19 +805,30 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     public convenience init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-
-        let buffer = try container.decode(String.self)
-        let ptr = Data(base64Encoded: buffer).flatMap { data in
-            data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) in
-                bytes.baseAddress.flatMap {
-                    croaring.roaring_bitmap_deserialize_safe($0, bytes.count)
-                }
-            }
+        let encoded = try container.decode(String.self)
+        guard let data = Data(base64Encoded: encoded) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not valid base64"
+            )
+        }
+        let ptr = data.withUnsafeBytes {
+            croaring.roaring_bitmap_deserialize_safe($0.baseAddress, data.count)
         }
         guard let ptr = ptr else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "not a serialized bitmap")
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not a valid serialized RoaringBitmap"
+            )
         }
         self.init(ptr: ptr)
+        // A bitmap read from untrusted bytes is only safe to use once validated.
+        if let reason = internalValidate() {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not a valid serialized RoaringBitmap: \(reason)"
+            )
+        }
     }
 
     ///
