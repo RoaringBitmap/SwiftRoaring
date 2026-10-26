@@ -1524,6 +1524,24 @@ extension RoaringBitmap {
         guard let words = bitset.pointee.array else { return [] }
         return [UInt64](UnsafeBufferPointer(start: words, count: bitset.pointee.arraysize))
     }
+
+    ///
+    /// Returns `count` words of the bitset, starting at word `firstWord`: value
+    /// `64 * (firstWord + k) + i` is present when bit `i` of word `k` is set.
+    /// The cost is proportional to `count` plus the number of values and runs
+    /// in the range, not to the size of the bitmap.
+    ///
+    /// `firstWord + count` must be at most 2^26 (that is, 2^32 / 64).
+    ///
+    public func toBitsetWords(firstWord: UInt32, count: UInt32) -> [UInt64] {
+        precondition(UInt64(firstWord) + UInt64(count) <= 1 << 26,
+                     "the words must lie within the 32-bit range")
+        if count == 0 { return [] }
+        return [UInt64](unsafeUninitializedCapacity: Int(count)) { buffer, initialized in
+            croaring.roaring_bitmap_word_range_to_bitset(self.ptr, firstWord, count, buffer.baseAddress)
+            initialized = Int(count)
+        }
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////

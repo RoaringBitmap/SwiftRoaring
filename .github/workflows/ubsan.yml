@@ -1,0 +1,22 @@
+name: Undefined behavior sanitizer
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  ubsan:
+    runs-on: macos-latest
+    env:
+      # Without halt_on_error, a report is printed and the tests still pass.
+      UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version
+        run: swift --version
+      - name: Test
+        run: swift test --sanitize=undefined

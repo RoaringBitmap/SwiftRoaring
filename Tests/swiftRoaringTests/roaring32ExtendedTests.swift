@@ -245,6 +245,23 @@ class roaring32ExtendedTests: XCTestCase {
         XCTAssertEqual(RoaringBitmap().toBitsetWords()?.filter { $0 != 0 }, [])
     }
 
+    func testToBitsetWordRange() {
+        let a: RoaringBitmap = [0, 1, 63, 64, 130, 70_000]
+        a.addRange(min: 1_000_000, max: 1_000_200)
+        guard let all = a.toBitsetWords() else {
+            return XCTFail("could not build the bitset")
+        }
+        XCTAssertEqual(a.toBitsetWords(firstWord: 0, count: 4), Array(all[0..<4]))
+        XCTAssertEqual(a.toBitsetWords(firstWord: 1, count: 2), [1, 4])
+        XCTAssertEqual(a.toBitsetWords(firstWord: 15_620, count: 8), Array(all[15_620..<15_628]))
+        XCTAssertEqual(a.toBitsetWords(firstWord: 1_000, count: 0), [])
+        // The words are written whether or not they hold values.
+        XCTAssertEqual(a.toBitsetWords(firstWord: 100, count: 3), [0, 0, 0])
+        // The last word of the 32-bit range.
+        let top: RoaringBitmap = [UInt32.max]
+        XCTAssertEqual(top.toBitsetWords(firstWord: 1 << 26 - 1, count: 1), [1 << 63])
+    }
+
     func testDeserializeSafe() {
         let a = RoaringBitmap(range: 0..<100, step: 3)
         var buffer = [Int8](repeating: 0, count: a.sizeInBytes())
