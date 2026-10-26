@@ -1378,3 +1378,125 @@ extension Roaring64Bitmap {
         self.init(ptr: ptr)
     }
 }
+
+#if compiler(>=6.2)
+
+/////////////////////////////////////////////////////////////////////////////
+///                       PORTABLE FORMAT IN PLACE                        ///
+/////////////////////////////////////////////////////////////////////////////
+
+@available(macOS 10.14.4, iOS 12.2, watchOS 5.2, tvOS 12.2, visionOS 1.0, *)
+extension Roaring64Bitmap {
+    ///
+    /// Reads a bitmap in the portable format from `bytes`, without copying them
+    /// first. Returns nil if `bytes` do not hold a valid bitmap. Reading no more
+    /// than `bytes`, the call itself is safe, but a bitmap recovered from
+    /// arbitrary bytes may still be malformed: check `internalValidate()` before
+    /// using one that came from an untrusted source.
+    ///
+    @inlinable
+    public convenience init?(portableBytes bytes: RawSpan) {
+        let ptr = bytes.withUnsafeBytes { bytes in
+            bytes.baseAddress.flatMap {
+                croaring.roaring64_bitmap_portable_deserialize_safe($0.assumingMemoryBound(to: CChar.self), bytes.count)
+            }
+        }
+        guard let ptr = ptr else { return nil }
+        self.init(ptr: ptr)
+    }
+
+    ///
+    /// Appends the bitmap in the portable format to `buffer`, which must have
+    /// at least `portableSizeInBytes()` bytes of free capacity.
+    ///
+    @inlinable
+    public func portableSerialize(into buffer: inout OutputRawSpan) {
+        precondition(buffer.freeCapacity >= self.portableSizeInBytes(), "buffer has less free capacity than portableSizeInBytes()")
+        buffer.withUnsafeMutableBytes { bytes, initializedCount in
+            initializedCount += croaring.roaring64_bitmap_portable_serialize(
+                self.ptr, (bytes.baseAddress! + initializedCount).assumingMemoryBound(to: CChar.self))
+        }
+    }
+
+    ///
+    /// Calls `body` with a read-only view of the portable bitmap in `bytes`, read
+    /// in place, and returns its result, or nil if `bytes` do not hold exactly one
+    /// valid bitmap or on big-endian machines. Only the layout is checked, not the values: for bytes from
+    /// an untrusted source, use `init?(portableBytes:)` and `internalValidate()`.
+    ///
+    @inlinable
+    public static func withPortableView<Result: ~Copyable, Failure: Error>(
+        of bytes: RawSpan,
+        _ body: (borrowing View) throws(Failure) -> Result
+    ) throws(Failure) -> Result? {
+        return try bytes.withUnsafeBytes { (bytes) throws(Failure) -> Result? in
+            guard let base = bytes.baseAddress?.assumingMemoryBound(to: CChar.self), !bytes.isEmpty,
+                  croaring.roaring64_bitmap_portable_deserialize_size(base, bytes.count) == bytes.count,
+                  let ptr = croaring.roaring64_bitmap_portable_deserialize_frozen(base, bytes.count) else {
+                return nil
+            }
+            defer { croaring.roaring64_bitmap_free(ptr) }
+            return try body(View(ptr: ptr))
+        }
+    }
+
+    ///
+    /// A read-only bitmap reading serialized bytes in place, lent to the body of
+    /// `withPortableView(of:_:)`. Being noncopyable and borrowed, it cannot
+    /// outlive that call.
+    ///
+    public struct View: ~Copyable {
+        @usableFromInline
+        let ptr: OpaquePointer
+
+        @inlinable
+        init(ptr: OpaquePointer) {
+            self.ptr = ptr
+        }
+
+        @inlinable
+        public var count: UInt64 {
+            return croaring.roaring64_bitmap_get_cardinality(self.ptr)
+        }
+
+        @inlinable
+        public var isEmpty: Bool {
+            return croaring.roaring64_bitmap_is_empty(self.ptr)
+        }
+
+        @inlinable
+        public func contains(_ value: UInt64) -> Bool {
+            return croaring.roaring64_bitmap_contains(self.ptr, value)
+        }
+
+        @inlinable
+        public func min() -> UInt64? {
+            return self.isEmpty ? nil : croaring.roaring64_bitmap_minimum(self.ptr)
+        }
+
+        @inlinable
+        public func max() -> UInt64? {
+            return self.isEmpty ? nil : croaring.roaring64_bitmap_maximum(self.ptr)
+        }
+
+        /// The number of values smaller than or equal to `value`.
+        @inlinable
+        public func rank(value: UInt64) -> UInt64 {
+            return croaring.roaring64_bitmap_rank(self.ptr, value)
+        }
+
+        /// The value of rank `rank`, the smallest having rank 0.
+        @inlinable
+        public func select(rank: UInt64) -> UInt64? {
+            var value: UInt64 = 0
+            return croaring.roaring64_bitmap_select(self.ptr, rank, &value) ? value : nil
+        }
+
+        /// A mutable copy, for anything a view does not offer.
+        public func copy() -> Roaring64Bitmap {
+            return Roaring64Bitmap(ptr: croaring.roaring64_bitmap_copy(self.ptr)!)
+        }
+    }
+}
+
+#endif
