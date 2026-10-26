@@ -23,7 +23,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
                                   Hashable, ExpressibleByArrayLiteral, SetAlgebra, Codable {
 
     @usableFromInline
-    var ptr: UnsafeMutablePointer<roaring_bitmap_t>
+    let ptr: UnsafeMutablePointer<roaring_bitmap_t>
 
     ///
     /// When this bitmap is a *frozen view* created by `frozenView(bytes:)`, this
@@ -31,7 +31,7 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     /// bitmap itself, by `deinit`. It is `nil` for every ordinary bitmap.
     ///
     @usableFromInline
-    var frozenBacking: UnsafeMutableRawPointer?
+    let frozenBacking: UnsafeMutableRawPointer?
 
     public typealias Element = UInt32
 
@@ -41,8 +41,8 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Creates a new bitmap (initially empty)
     ///
-    required public init() {
-        self.ptr = croaring.roaring_bitmap_create()!
+    required public convenience init() {
+        self.init(ptr: croaring.roaring_bitmap_create()!)
     }
 
     ///
@@ -50,41 +50,47 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     required public init(ptr: UnsafeMutablePointer<roaring_bitmap_t>) {
         self.ptr = ptr
+        self.frozenBacking = nil
+    }
+
+    private init(ptr: UnsafeMutablePointer<roaring_bitmap_t>, frozenBacking: UnsafeMutableRawPointer) {
+        self.ptr = ptr
+        self.frozenBacking = frozenBacking
     }
 
     ///
     /// Add all the values between min (included) and max (excluded) that are at a
     /// distance k*step from min.
     ///
-    public init(min: UInt64, max: UInt64, step: UInt32) {
-        self.ptr = croaring.roaring_bitmap_from_range(min, max, step)!
+    public convenience init(min: UInt64, max: UInt64, step: UInt32) {
+        self.init(ptr: croaring.roaring_bitmap_from_range(min, max, step)!)
     }
 
-    public init(range: Range<UInt64>, step: UInt32) {
-        self.ptr = croaring.roaring_bitmap_from_range(
+    public convenience init(range: Range<UInt64>, step: UInt32) {
+        self.init(ptr: croaring.roaring_bitmap_from_range(
             range.lowerBound,
             range.upperBound,
             step
-        )!
+        )!)
     }
 
     ///
     /// Creates a new bitmap (initially empty) with a provided
     /// container-storage capacity (it is a performance hint).
     ///
-    public init(capacity: UInt32) {
-        self.ptr = croaring.roaring_bitmap_create_with_capacity(capacity)!
+    public convenience init(capacity: UInt32) {
+        self.init(ptr: croaring.roaring_bitmap_create_with_capacity(capacity)!)
     }
 
     ///
     /// Creates a new bitmap from a pointer of `uint32_t` integers
     ///
-    public init(values: [UInt32]) {
-        self.ptr = croaring.roaring_bitmap_of_ptr(values.count, values)!
+    public convenience init(values: [UInt32]) {
+        self.init(ptr: croaring.roaring_bitmap_of_ptr(values.count, values)!)
     }
 
-    public required init(arrayLiteral: Element...) {
-        self.ptr = croaring.roaring_bitmap_create()!
+    public required convenience init(arrayLiteral: Element...) {
+        self.init(ptr: croaring.roaring_bitmap_create()!)
         for i in arrayLiteral { add(i) }
 
     }
@@ -782,14 +788,14 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Encodable conformance
     ///
-    public func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         let count = self.sizeInBytes()
         var data = Data(count: count)
 
-        data.withUnsafeMutableBytes {
-            let ptr = $0.baseAddress!.assumingMemoryBound(to: Int8.self)
-            croaring.roaring_bitmap_serialize(self.ptr, ptr)
+        data.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) in
+            let ptr = buffer.baseAddress!.assumingMemoryBound(to: Int8.self)
+            _ = croaring.roaring_bitmap_serialize(self.ptr, ptr)
         }
         try container.encode(data.base64EncodedString())
     }
@@ -797,13 +803,31 @@ public final class RoaringBitmap: Sequence, Equatable, CustomStringConvertible,
     ///
     /// Decodable conformance
     ///
-    public init(from decoder: Decoder) throws {
+    public convenience init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
-
-        let buffer = try container.decode(String.self)
-        let data = Data(base64Encoded: buffer)
-        self.ptr = data!.withUnsafeBytes {
-            croaring.roaring_bitmap_deserialize($0)!
+        let encoded = try container.decode(String.self)
+        guard let data = Data(base64Encoded: encoded) else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not valid base64"
+            )
+        }
+        let ptr = data.withUnsafeBytes {
+            croaring.roaring_bitmap_deserialize_safe($0.baseAddress, data.count)
+        }
+        guard let ptr = ptr else {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not a valid serialized RoaringBitmap"
+            )
+        }
+        self.init(ptr: ptr)
+        // A bitmap read from untrusted bytes is only safe to use once validated.
+        if let reason = internalValidate() {
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "not a valid serialized RoaringBitmap: \(reason)"
+            )
         }
     }
 
@@ -1653,9 +1677,7 @@ extension RoaringBitmap {
             buffer.deallocate()
             return nil
         }
-        let bitmap = Self(ptr: ptr)
-        bitmap.frozenBacking = buffer
-        return bitmap
+        return Self(ptr: ptr, frozenBacking: buffer)
     }
 }
 
